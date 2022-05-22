@@ -16,7 +16,7 @@ import { publicRoutes, adminRoutes } from "./routes";
 // styles
 import "./App.css";
 
-const user = { id: "12wjq91", role: "" };
+const user = { id: "12wjq91", role: "ADMIN" };
 
 function App() {
   return (

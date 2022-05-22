@@ -1,4 +1,6 @@
+import { useContext } from "react";
 import {
+  CircularProgress,
   Dialog,
   DialogActions,
   DialogContent,
@@ -7,6 +9,9 @@ import {
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import CloseIcon from "@mui/icons-material/Close";
+
+// context
+import GlobalContext from "../../context/global-context";
 
 // components
 import Button from "../button/Button";
@@ -50,16 +55,20 @@ const Modal = ({
   content,
   buttonLabel = "Submit",
 }) => {
+  const { loading } = useContext(GlobalContext);
   return (
-    <form onSubmit={onSubmit}>
-      <BootstrapDialog open={open} onClose={onClose}>
+    <BootstrapDialog open={open} onClose={onClose}>
+      <form onSubmit={onSubmit}>
         <BootstrapDialogTitle onClose={onClose}>{title}</BootstrapDialogTitle>
-        <DialogContent dividers>{content}</DialogContent>
+        <DialogContent dividers>
+          {loading && <CircularProgress sx={{ marginLeft: "50%" }} />}
+          {!loading && content}
+        </DialogContent>
         <DialogActions>
           <Button type="submit" label={buttonLabel} />
         </DialogActions>
-      </BootstrapDialog>
-    </form>
+      </form>
+    </BootstrapDialog>
   );
 };
 
