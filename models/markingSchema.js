@@ -6,6 +6,9 @@ const markingSchema = new Schema(
   {
     name: {
       type: String,
+      lowercase: true,
+      trim: true,
+      unique: true,
       required: true,
     },
     fileName: {

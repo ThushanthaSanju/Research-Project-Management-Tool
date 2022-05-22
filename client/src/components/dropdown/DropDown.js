@@ -1,10 +1,4 @@
-import {
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
-  FormHelperText,
-} from "@mui/material";
+import { FormControl, InputLabel, MenuItem, Select, FormHelperText } from "@mui/material";
 
 const DropDown = ({
   fullWidth = true,

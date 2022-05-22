@@ -3,6 +3,9 @@
 /client/node_modules
 .env
 
+# public
+/public
+
 # testing
 
 # production

@@ -131,7 +131,7 @@ const Users = () => {
       onNotifyOpen();
       fetchUsers();
     }
-  }
+  };
 
   const fetchUsers = async () => {
     onLoading(true);
