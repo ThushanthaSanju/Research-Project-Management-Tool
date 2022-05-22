@@ -14,6 +14,7 @@ import GlobalContext from "../../../context/global-context";
 import DropDown from "../../../components/dropdown/DropDown";
 import Modal from "../../../components/modal/Modal";
 import TextField from "../../../components/textField/TextField";
+import Notify from "../../../components/notify/Notify";
 
 // services
 import service from "../../../services/admin-services";
@@ -76,7 +77,7 @@ const formDetails = [
 ];
 
 const Users = () => {
-  const { open, loading, onModalOpen, onModalClose, onLoading } =
+  const { open, loading, notify, onModalOpen, onModalClose, onLoading, onNotifyOpen } =
     useContext(GlobalContext);
 
   const [role, setRole] = useState("");
@@ -110,9 +111,31 @@ const Users = () => {
     });
   };
 
+  const submitHandler = async (event) => {
+    console.log('object');
+    event.preventDefault();
+    onLoading(true);
+
+    const response = await service.patchUser(data);
+
+    if (response.status === 200) {
+      onModalClose();
+      fetchUsers();
+    }
+  };
+
+  const deleteHandler = async (id) => {
+    const response = await service.deleteUser(id);
+
+    if (response.status === 200) {
+      onNotifyOpen();
+      fetchUsers();
+    }
+  }
+
   const fetchUsers = async () => {
     onLoading(true);
-    const response = await service.getUsers();
+    const response = await service.getUsers(role);
     if (response.status) {
       if (response.data.body && response.data.body.users) {
         setRows(response.data.body.users);
@@ -123,7 +146,7 @@ const Users = () => {
 
   useEffect(() => {
     fetchUsers();
-  }, []);
+  }, [role]);
 
   const columns = [
     ...gridColumns,
@@ -137,7 +160,7 @@ const Users = () => {
             <IconButton onClick={viewClickHandler.bind(null, params.row)}>
               <ViewIcon sx={{ color: "#00474F" }} />
             </IconButton>
-            <IconButton>
+            <IconButton onClick={deleteHandler.bind(null, params.row._id)}>
               <DeleteIcon sx={{ color: "red" }} />
             </IconButton>
           </>
@@ -222,7 +245,9 @@ const Users = () => {
         content={content}
         buttonLabel="Update"
         onClose={closeModalHandler}
+        onSubmit={submitHandler}
       />
+      <Notify open={notify} message="User deleted successfully" />
     </>
   );
 };
