@@ -5,6 +5,8 @@ import Users from "./pages/admin/users/Users";
 import SignIn from "./pages/auth/SignIn";
 import SignUp from "./pages/auth/SignUp";
 import Submissions from "./pages/admin/submissions/Submissions";
+import MarkingSchema from "./pages/admin/markingSchemas/MarkingSchema";
+import Dashboard from "./pages/student/dashboard/Dashboard";
 
 export const publicRoutes = [
   {
@@ -40,10 +42,25 @@ export const adminRoutes = [
   },
   {
     path: "/schemas",
-    element: <h6>Marking Schemas</h6>,
+    element: <MarkingSchema />,
   },
   {
     path: "/uploads",
     element: <h6>Uploads</h6>,
   },
 ];
+
+export const studentRoutes = [
+  {
+    path: '/',
+    element: <Dashboard />
+  },
+  {
+    path: '/sign-up',
+    element: <Dashboard />
+  },
+  {
+    path: "/dashboard",
+    element: <Navigate to="/" replace />,
+  },
+]

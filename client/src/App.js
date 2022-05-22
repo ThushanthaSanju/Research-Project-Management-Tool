@@ -11,28 +11,33 @@ import Layout from "./components/layout/Layout";
 import theme from "./theme";
 
 // routes
-import { publicRoutes, adminRoutes } from "./routes";
+import { publicRoutes, adminRoutes, studentRoutes } from "./routes";
 
 // styles
 import "./App.css";
 
-const user = { id: "12wjq91", role: "" };
-
 function App() {
+  const token = localStorage.getItem("token");
+  const user = JSON.parse(localStorage.getItem("user"));
+
   return (
     <ThemeProvider theme={theme}>
       <Routes>
-        {!user.role &&
+        {!token &&
           publicRoutes.map((item, index) => (
             <Route key={index} path={item.path} element={item.element} />
           ))}
       </Routes>
       <GlobalProvider>
-        {user.role && (
+        {token && (
           <Layout>
             <Routes>
-              {user.role === "ADMIN" &&
+              {user && user.role === "admin" &&
                 adminRoutes.map((item, index) => (
+                  <Route key={index} path={item.path} element={item.element} />
+                ))}
+              {user && user.role === "student" &&
+                studentRoutes.map((item, index) => (
                   <Route key={index} path={item.path} element={item.element} />
                 ))}
             </Routes>

@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+
 import {
   AppBar,
   Box,
@@ -23,7 +24,10 @@ import {
   Groups as GroupsIcon,
   Article as ArticleIcon,
   CloudUpload as CloudUploadIcon,
+  Dashboard as DashboardIcon
 } from "@mui/icons-material";
+
+import httpRequests from '../../services/public-services';
 
 // assets
 import AvatarImg from "../../assets/avatar.jpg";
@@ -87,8 +91,6 @@ const useStyles = makeStyles({
   },
 });
 
-const user = { id: "12wjq91", role: "ADMIN" };
-
 const adminNavLinks = [
   {
     label: "Users",
@@ -115,6 +117,14 @@ const adminNavLinks = [
     icon: <CloudUploadIcon sx={{ color: "black" }} />,
     path: "/uploads",
   },
+];
+
+const studentNavLinks = [
+  {
+    label: "Dashboard",
+    icon: <DashboardIcon sx={{ color: "black" }} />,
+    path: "/dashboard",
+  }
 ];
 
 // ListItem
@@ -148,6 +158,23 @@ const Layout = (props) => {
     setAnchorElUser(null);
   };
 
+  const onLogout = async () => {
+    try {
+      const { status } = await httpRequests.logout();
+
+      if (status === 200) {
+
+        localStorage.removeItem('user');
+        localStorage.removeItem('token');
+        window.location.reload();
+        navigate('/sign-in');
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const user = JSON.parse(localStorage.getItem("user"));
+
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
@@ -180,7 +207,7 @@ const Layout = (props) => {
               open={Boolean(anchorElUser)}
               onClose={userMenuHandler}
             >
-              <MenuItem>Logout</MenuItem>
+              <MenuItem onClick={onLogout}>Logout</MenuItem>
             </Menu>
           </Toolbar>
         </AppBar>
@@ -196,8 +223,25 @@ const Layout = (props) => {
             </Typography>
           </div>
           <List sx={{ marginTop: "60px" }}>
-            {user.role === "ADMIN" &&
+            {user.role === "admin" &&
               adminNavLinks.map(({ label, icon, path }, index) => (
+                <ListItem
+                  key={index}
+                  selected={selected === index}
+                  onClick={(event) => listItemClickHandler(event, index, path)}
+                >
+                  <ListItemButton>
+                    <ListItemIcon>{icon}</ListItemIcon>
+                    <ListItemText
+                      disableTypography
+                      className={classes.navText}
+                      primary={label}
+                    />
+                  </ListItemButton>
+                </ListItem>
+              ))}
+            {user.role === "student" &&
+              studentNavLinks.map(({ label, icon, path }, index) => (
                 <ListItem
                   key={index}
                   selected={selected === index}
