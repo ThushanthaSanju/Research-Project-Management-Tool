@@ -13,7 +13,6 @@ app.use(express.json());
 const userRoute = require('../routes/user');
 const adminRoute = require('../routes/admin');
 
-app.use('/images',express.static('public'))
 app.use(userRoute);
 app.use(adminRoute);
 
