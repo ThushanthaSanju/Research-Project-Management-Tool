@@ -2,6 +2,23 @@ import { Navigate } from "react-router-dom";
 
 // pages
 import Users from './pages/admin/users/Users';
+import SignIn from './pages/auth/SignIn';
+import SignUp from "./pages/auth/SignUp";
+
+export const publicRoutes = [
+  {
+    path: "/",
+    element: <SignIn />
+  },
+  {
+    path: "/sign-up",
+    element: <SignUp />
+  },
+  {
+    path: "/sign-in",
+    element: <Navigate to="/" replace />,
+  },
+];
 
 export const adminRoutes = [
   {
@@ -27,9 +44,5 @@ export const adminRoutes = [
   {
     path: "/uploads",
     element: <h6>Uploads</h6>,
-  },
-  {
-    path: "/roles",
-    element: <h6>User roles</h6>,
   },
 ];

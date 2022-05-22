@@ -1,6 +1,9 @@
 import { Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "@mui/material/styles";
 
+// providers
+import GlobalProvider from "./context/global-provider";
+
 // components
 import Layout from "./components/layout/Layout";
 
@@ -8,24 +11,34 @@ import Layout from "./components/layout/Layout";
 import theme from "./theme";
 
 // routes
-import { adminRoutes } from "./routes";
+import { publicRoutes, adminRoutes } from "./routes";
 
-const user = { id: "12wjq91", role: 'ADMIN' };
+// styles
+import "./App.css";
+
+const user = { id: "12wjq91", role: "" };
 
 function App() {
   return (
     <ThemeProvider theme={theme}>
-      {!user.role && <h1>Login</h1>}
-      {user.role && (
-        <Layout>
-          <Routes>
-            {user.role === "ADMIN" &&
-              adminRoutes.map((item) => (
-                <Route path={item.path} element={item.element} />
-              ))}
-          </Routes>
-        </Layout>
-      )}
+      <Routes>
+        {!user.role &&
+          publicRoutes.map((item, index) => (
+            <Route key={index} path={item.path} element={item.element} />
+          ))}
+      </Routes>
+      <GlobalProvider>
+        {user.role && (
+          <Layout>
+            <Routes>
+              {user.role === "ADMIN" &&
+                adminRoutes.map((item, index) => (
+                  <Route key={index} path={item.path} element={item.element} />
+                ))}
+            </Routes>
+          </Layout>
+        )}
+      </GlobalProvider>
     </ThemeProvider>
   );
 }
