@@ -1,31 +1,24 @@
 import { Navigate } from "react-router-dom";
 
 // pages
-import Users from "./pages/admin/users/Users";
-import SignIn from "./pages/auth/SignIn";
-import SignUp from "./pages/auth/SignUp";
-import Submissions from "./pages/admin/submissions/Submissions";
-import MarkingSchema from "./pages/admin/markingSchemas/MarkingSchema";
+import Users from './pages/admin/users/Users';
+import SignIn from './pages/auth/SignIn';
 
 export const publicRoutes = [
   {
     path: "/",
-    element: <SignIn />,
-  },
-  {
-    path: "/sign-up",
-    element: <SignUp />
+    element: <SignIn />
   },
   {
     path: "/sign-in",
     element: <Navigate to="/" replace />,
   },
-];
+]
 
 export const adminRoutes = [
   {
     path: "/",
-    element: <Users />,
+    element: <Users />
   },
   {
     path: "/users",
@@ -33,7 +26,7 @@ export const adminRoutes = [
   },
   {
     path: "/submissions",
-    element: <Submissions />,
+    element: <h6>Submissions</h6>,
   },
   {
     path: "/panels",
@@ -41,7 +34,7 @@ export const adminRoutes = [
   },
   {
     path: "/schemas",
-    element: <MarkingSchema />,
+    element: <h6>Marking Schemas</h6>,
   },
   {
     path: "/uploads",

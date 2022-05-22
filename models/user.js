@@ -79,23 +79,6 @@ userSchema.methods.generateAuthToken = async function () {
     return token;
 };
 
-userSchema.statics.findByCredentials = async (email, password) => {
-
-    const user = await User.findOne({ email });
-
-    if (!user) {
-        throw new Error(`The email address or the password that you've entered is invalid!`);
-    }
-
-    const isMatch = await bcrypt.compare(password, user.password);
-
-    if (!isMatch) {
-        throw Error(`The email address or the password that you've entered is invalid!`);
-    }
-
-    return user;
-};
-
 userSchema.pre('save', async function (next) {
     const user = this;
 
