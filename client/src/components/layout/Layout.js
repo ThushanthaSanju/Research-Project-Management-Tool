@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 import {
   AppBar,
   Box,
@@ -13,6 +13,8 @@ import {
   ListItemButton,
   ListItemIcon,
   ListItemText,
+  Menu,
+  MenuItem,
 } from "@mui/material";
 import { makeStyles, withStyles } from "@mui/styles";
 import {
@@ -21,7 +23,6 @@ import {
   Groups as GroupsIcon,
   Article as ArticleIcon,
   CloudUpload as CloudUploadIcon,
-  SupervisedUserCircle as SupervisedUserCircleIcon,
 } from "@mui/icons-material";
 
 // assets
@@ -92,32 +93,27 @@ const adminNavLinks = [
   {
     label: "Users",
     icon: <PeopleIcon sx={{ color: "black" }} />,
-    path: '/users'
+    path: "/users",
   },
   {
     label: "Submission Types",
     icon: <CategoryIcon sx={{ color: "black" }} />,
-    path: '/submissions'
+    path: "/submissions",
   },
   {
     label: "Panel Members",
     icon: <GroupsIcon sx={{ color: "black" }} />,
-    path: '/panels'
+    path: "/panels",
   },
   {
     label: "Marking Schemas",
     icon: <ArticleIcon sx={{ color: "black" }} />,
-    path: '/schemas'
+    path: "/schemas",
   },
   {
     label: "Uploads",
     icon: <CloudUploadIcon sx={{ color: "black" }} />,
-    path: '/uploads'
-  },
-  {
-    label: "User roles",
-    icon: <SupervisedUserCircleIcon sx={{ color: "black" }} />,
-    path: '/roles'
+    path: "/uploads",
   },
 ];
 
@@ -137,10 +133,19 @@ const Layout = (props) => {
   const navigate = useNavigate();
 
   const [selected, setSelected] = useState(0);
+  const [anchorElUser, setAnchorElUser] = useState(null);
 
   const listItemClickHandler = (event, index, path) => {
     setSelected(index);
     navigate(path);
+  };
+
+  const avatarClickHandler = (event) => {
+    setAnchorElUser(event.currentTarget);
+  };
+
+  const userMenuHandler = (event) => {
+    setAnchorElUser(null);
   };
 
   return (
@@ -157,9 +162,26 @@ const Layout = (props) => {
               sx={{ mr: 2 }}
             ></IconButton>
             <Typography variant="h6" component="div" sx={{ flexGrow: 1 }} />
-            <IconButton>
+            <IconButton onClick={avatarClickHandler}>
               <Avatar src={AvatarImg} />
             </IconButton>
+            <Menu
+              sx={{ mt: "45px" }}
+              anchorEl={anchorElUser}
+              anchorOrigin={{
+                vertical: "top",
+                horizontal: "right",
+              }}
+              keepMounted
+              transformOrigin={{
+                vertical: "top",
+                horizontal: "right",
+              }}
+              open={Boolean(anchorElUser)}
+              onClose={userMenuHandler}
+            >
+              <MenuItem>Logout</MenuItem>
+            </Menu>
           </Toolbar>
         </AppBar>
       </Box>
