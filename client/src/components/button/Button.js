@@ -12,8 +12,8 @@ const Button = ({
       type={type}
       variant={variant}
       onClick={onClick}
-      {...props}
       sx={{ textTransform: "none" }}
+      {...props}
     >
       {label}
     </MaterialButton>
