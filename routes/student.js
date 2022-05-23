@@ -12,6 +12,22 @@ const User = require("../models/user");
 // response helper
 const { response, error } = require("../helpers/responseHelper");
 
+// read groups
+router.get('/api/students/groups', auth, async (req, res) => {
+  try {
+    const match = {};
+
+    if (req.query.name) {
+      match.name = req.query.name;
+    }
+    const groups = await Group.find(match).populate('students');
+
+    response(res, true, "Success", 200, "Groups fetched successfully", groups);
+  } catch (e) {
+    error(res, e);
+  }
+});
+
 // read specific student
 router.get("/api/students/:id", auth, async (req, res) => {
   try {
@@ -42,19 +58,15 @@ router.get("/api/students/profile/:id", async (req, res) => {
 // create group
 router.post("/api/students/groups", auth, studentRoute, async (req, res) => {
   try {
-    const { students } = req.body;
-
     const group = new Group(req.body);
 
     await group.save();
 
+    await User.findOneAndUpdate({ _id: req.body.students[0] }, { group: group._id }, { new: true });
+
     if (!group) {
       return response(res, false, "Failed", 400, "Group creation failed!");
     }
-
-    students.forEach(async (student) => {
-      await User.findOneAndUpdate({ _id: student }, { group: group._id }, { new: true });
-    });
 
     response(res, true, "Success", 201, "Group creation successful", { group });
   } catch (e) {
