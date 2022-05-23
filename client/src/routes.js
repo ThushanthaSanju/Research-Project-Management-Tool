@@ -10,7 +10,6 @@ import Dashboard from "./pages/student/dashboard/Dashboard";
 import Chat from "./pages/chat/Chat";
 import PanelMembers from './pages/admin/panelMembers/PanelMembers';
 import Uploads from './pages/admin/uploads/Uploads';
-import StudentUploads from './pages/student/submissions/Uploads';
 
 export const publicRoutes = [
   {
@@ -70,9 +69,5 @@ export const studentRoutes = [
   {
     path: "/group-chat/:id",
     element: <Chat />,
-  },
-  {
-    path: "/submissions",
-    element: <StudentUploads />,
   },
 ];

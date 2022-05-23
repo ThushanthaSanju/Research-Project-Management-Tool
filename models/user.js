@@ -47,10 +47,6 @@ const userSchema = new Schema(
       enum: ["student", "admin", "staff"],
       required: true,
     },
-    group: {
-      type: Schema.Types.ObjectId,
-      ref: 'Group'
-    },
     tokens: [
       {
         token: {
@@ -58,7 +54,11 @@ const userSchema = new Schema(
           required: true,
         },
       },
-    ]
+    ],
+    group: {
+      type: Schema.Types.ObjectId,
+      ref: 'Group'
+    },
   },
   {
     timestamps: true,

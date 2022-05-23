@@ -68,16 +68,12 @@ const userRoute = require('./routes/user');
 const adminRoute = require('./routes/admin');
 const studentRoute = require('./routes/student');
 const groupRoute = require('./routes/group');
-const researchTopicRoute = require('./routes/researchTopic');
-const requestRoute = require('./routes/request');
 
 app.use('/images', express.static('public'));
 app.use(userRoute);
 app.use(adminRoute);
 app.use(studentRoute);
 app.use(groupRoute);
-app.use(researchTopicRoute);
-app.use(requestRoute);
 
 server.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);

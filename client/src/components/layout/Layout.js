@@ -131,14 +131,9 @@ const studentNavLinks = [
     path: "/dashboard",
   },
   {
-    label: "Submissions",
-    icon: <CloudUploadIcon sx={{ color: "black" }} />,
-    path: '/submissions',
-  },
-  {
     label: "Chat",
     icon: <ForumIcon sx={{ color: "black" }} />,
-    path: `/group-chat/${user?.group || ''}`,
+    path: `/group-chat/${user.group}`,
   },
 ];
 
@@ -181,8 +176,8 @@ const Layout = (props) => {
       if (status === 200) {
         localStorage.removeItem("user");
         localStorage.removeItem("token");
-        navigate("/sign-in");
         window.location.reload();
+        navigate("/sign-in");
       }
     } catch (error) {
       console.log(error);

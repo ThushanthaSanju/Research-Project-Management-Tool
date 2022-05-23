@@ -12,9 +12,9 @@ const adminRoute = require('../middleware/adminRoute');
 const User = require("../models/user");
 const SubmissionType = require("../models/submissionTypes");
 const MarkingSchema = require("../models/markingSchema");
-const Group = require('../models/group');
+const Group = require('../models/groups');
 const Panel = require("../models/panel");
-const Document = require("../models/document");
+const Document = require("../models/document")
 
 // response helper
 const { response, error } = require("../helpers/responseHelper");
@@ -42,7 +42,7 @@ const upload = multer({
 });
 
 // fetch all users
-router.get("/api/admin/users", auth, async (req, res) => {
+router.get("/api/admin/users", auth, adminRoute, async (req, res) => {
   try {
     const match = {};
 
@@ -54,7 +54,7 @@ router.get("/api/admin/users", auth, async (req, res) => {
 
     response(res, true, "Success", 200, "Users fetched successfully", { users });
   } catch (e) {
-    error(res, e);
+    return error(res, e);
   }
 });
 
@@ -66,7 +66,6 @@ router.get('/api/admin/groups', auth, async (req, res) => {
     if (req.query.name) {
       match.name = req.query.name;
     }
-
     const groups = await Group.find(match).populate('students');
 
     response(res, true, "Success", 200, "Groups fetched successfully", { groups });
@@ -88,7 +87,7 @@ router.post("/api/admin/submissions", auth, adminRoute, async (req, res) => {
 
     response(res, true, "Success", 201, "Submission type created", { submission });
   } catch (error) {
-    error(res, error);
+    return error(res, error);
   }
 });
 
@@ -99,7 +98,7 @@ router.get("/api/admin/submissions", auth, adminRoute, async (req, res) => {
 
     response(res, true, "Success", 200, "Submission types fetched successfully", { submissions, });
   } catch (e) {
-    error(res, e);
+    return error(res, e);
   }
 });
 
@@ -110,7 +109,7 @@ router.get("/api/admin/marking-schemas", auth, adminRoute, async (req, res) => {
 
     response(res, true, "Success", 200, "Marking schemas fetched successfully", { schemas });
   } catch (e) {
-    error(res, e);
+    return error(res, e);
   }
 });
 
@@ -161,9 +160,9 @@ router.patch("/api/admin/users", auth, adminRoute, async (req, res) => {
       return response(res, false, "Not Found", 404, "User does not found", { _id });
     }
 
-    response(res, true, "Success", 200, "User updated successfully", { user });
+    return response(res, true, "Success", 200, "User updated successfully", { user });
   } catch (e) {
-    error(res, e);
+    return error(res, e);
   }
 });
 
@@ -176,9 +175,9 @@ router.delete("/api/admin/users/:id", auth, adminRoute, async (req, res) => {
       return response(res, false, "Not Found", 404, "User does not found", { id });
     }
 
-    response(res, true, "Success", 200, "User deleted successfully", { user });
+    return response(res, true, "Success", 200, "User deleted successfully", { user });
   } catch (e) {
-    error(res, e);
+    return error(res, e);
   }
 });
 
@@ -187,11 +186,11 @@ router.get("/api/admin/panels", auth, adminRoute, async (req, res) => {
   try {
     const panels = await Panel.find();
 
-    response(res, true, "Success", 200, "Panels fetched successfully", { panels });
+    return response(res, true, "Success", 200, "Panels fetched successfully", { panels });
   } catch (e) {
-    error(res, e);
+    return error(res, e);
   }
-});
+})
 
 // create panel 
 router.post("/api/admin/panels", auth, adminRoute, async (req, res) => {
@@ -217,7 +216,7 @@ router.post("/api/admin/panels", auth, adminRoute, async (req, res) => {
     });
 
     if (!isAllStaff) {
-      return response(res, false, "Failed", 404, "Members should be staff!");
+      response(res, false, "Failed", 404, "Members should be staff!");
     }
 
     const panel = new Panel({ name, members });
@@ -226,7 +225,7 @@ router.post("/api/admin/panels", auth, adminRoute, async (req, res) => {
 
     response(res, true, "Success", 200, "Panel created successfully", { panel });
   } catch (e) {
-    error(res, e);
+    return error(res, e);
   }
 });
 
@@ -251,7 +250,7 @@ router.patch("/api/admin/groups/:id/allocate-panel", auth, adminRoute, async (re
 
     response(res, true, "Success", 200, "Panel allocated successfully", { group });
   } catch (e) {
-    error(res, e);
+    return error(res, e);
   }
 });
 
@@ -265,7 +264,7 @@ router.get("/api/admin/documents", auth, adminRoute, async (req, res) => {
   } catch (e) {
     return error(res, e);
   }
-});
+})
 
 // add new document
 router.post("/api/admin/documents", auth, adminRoute, upload.single('file'), async (req, res) => {
@@ -280,10 +279,11 @@ router.post("/api/admin/documents", auth, adminRoute, upload.single('file'), asy
       return response(res, false, "Failed", 400, "Something went wrong", {});
     }
 
-    response(res, true, "Success", 201, "Document uploaded", {});
+    return response(res, true, "Success", 201, "Document uploaded", {});
+
   } catch (e) {
-    error(res, e);
+    return error(res, e);
   }
-});
+})
 
 module.exports = router;
