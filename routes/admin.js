@@ -12,8 +12,9 @@ const adminRoute = require('../middleware/adminRoute');
 const User = require("../models/user");
 const SubmissionType = require("../models/submissionTypes");
 const MarkingSchema = require("../models/markingSchema");
-const Group = require('../models/groups');
+const Group = require('../models/group');
 const Panel = require("../models/panel");
+const Document = require("../models/document");
 
 // response helper
 const { response, error } = require("../helpers/responseHelper");
@@ -29,7 +30,7 @@ const upload = multer({
     },
   }),
   fileFilter(req, file, cb) {
-    if (!file.originalname.match(/\.(jpeg|jpg|png|pdf|doc|docx|xlsx|xls)$/)) {
+    if (!file.originalname.match(/\.(jpeg|jpg|png|pdf|doc|docx|xlsx|xls|ppt)$/)) {
       return cb(
         new Error(
           "only upload files with jpg, jpeg, png, pdf, doc, docx, xslx, xls format."
@@ -41,7 +42,7 @@ const upload = multer({
 });
 
 // fetch all users
-router.get("/api/admin/users", auth, adminRoute, async (req, res) => {
+router.get("/api/admin/users", auth, async (req, res) => {
   try {
     const match = {};
 
@@ -53,7 +54,24 @@ router.get("/api/admin/users", auth, adminRoute, async (req, res) => {
 
     response(res, true, "Success", 200, "Users fetched successfully", { users });
   } catch (e) {
-    return error(res, e);
+    error(res, e);
+  }
+});
+
+// read groups
+router.get('/api/admin/groups', auth, async (req, res) => {
+  try {
+    const match = {};
+
+    if (req.query.name) {
+      match.name = req.query.name;
+    }
+
+    const groups = await Group.find(match).populate('students');
+
+    response(res, true, "Success", 200, "Groups fetched successfully", { groups });
+  } catch (e) {
+    error(res, e);
   }
 });
 
@@ -70,7 +88,7 @@ router.post("/api/admin/submissions", auth, adminRoute, async (req, res) => {
 
     response(res, true, "Success", 201, "Submission type created", { submission });
   } catch (error) {
-    return error(res, error);
+    error(res, error);
   }
 });
 
@@ -81,7 +99,7 @@ router.get("/api/admin/submissions", auth, adminRoute, async (req, res) => {
 
     response(res, true, "Success", 200, "Submission types fetched successfully", { submissions, });
   } catch (e) {
-    return error(res, e);
+    error(res, e);
   }
 });
 
@@ -92,7 +110,7 @@ router.get("/api/admin/marking-schemas", auth, adminRoute, async (req, res) => {
 
     response(res, true, "Success", 200, "Marking schemas fetched successfully", { schemas });
   } catch (e) {
-    return error(res, e);
+    error(res, e);
   }
 });
 
@@ -143,9 +161,9 @@ router.patch("/api/admin/users", auth, adminRoute, async (req, res) => {
       return response(res, false, "Not Found", 404, "User does not found", { _id });
     }
 
-    return response(res, true, "Success", 200, "User updated successfully", { user });
+    response(res, true, "Success", 200, "User updated successfully", { user });
   } catch (e) {
-    return error(res, e);
+    error(res, e);
   }
 });
 
@@ -158,9 +176,20 @@ router.delete("/api/admin/users/:id", auth, adminRoute, async (req, res) => {
       return response(res, false, "Not Found", 404, "User does not found", { id });
     }
 
-    return response(res, true, "Success", 200, "User deleted successfully", { user });
+    response(res, true, "Success", 200, "User deleted successfully", { user });
   } catch (e) {
-    return error(res, e);
+    error(res, e);
+  }
+});
+
+// read all panels
+router.get("/api/admin/panels", auth, adminRoute, async (req, res) => {
+  try {
+    const panels = await Panel.find();
+
+    response(res, true, "Success", 200, "Panels fetched successfully", { panels });
+  } catch (e) {
+    error(res, e);
   }
 });
 
@@ -171,7 +200,7 @@ router.post("/api/admin/panels", auth, adminRoute, async (req, res) => {
     const { name, members } = req.body;
 
     // ----------------- should be 4 --------------//
-    if (members.length !== 2) {
+    if (members.length !== 4) {
       return response(res, false, "Failed", 404, "Should have two members!");
     }
 
@@ -188,7 +217,7 @@ router.post("/api/admin/panels", auth, adminRoute, async (req, res) => {
     });
 
     if (!isAllStaff) {
-      response(res, false, "Failed", 404, "Members should be staff!");
+      return response(res, false, "Failed", 404, "Members should be staff!");
     }
 
     const panel = new Panel({ name, members });
@@ -197,7 +226,7 @@ router.post("/api/admin/panels", auth, adminRoute, async (req, res) => {
 
     response(res, true, "Success", 200, "Panel created successfully", { panel });
   } catch (e) {
-    return error(res, e);
+    error(res, e);
   }
 });
 
@@ -222,7 +251,38 @@ router.patch("/api/admin/groups/:id/allocate-panel", auth, adminRoute, async (re
 
     response(res, true, "Success", 200, "Panel allocated successfully", { group });
   } catch (e) {
+    error(res, e);
+  }
+});
+
+// read all documents
+router.get("/api/admin/documents", auth, adminRoute, async (req, res) => {
+  try {
+    const documents = await Document.find().populate('submission_type');
+
+    return response(res, true, "Success", 200, "Documents fetched successfully", { documents });
+
+  } catch (e) {
     return error(res, e);
+  }
+});
+
+// add new document
+router.post("/api/admin/documents", auth, adminRoute, upload.single('file'), async (req, res) => {
+  try {
+    const { submission_type } = req.body;
+    const { filename } = req.file;
+
+    const obj = new Document({ file_name: filename, submission_type });
+    const document = await obj.save();
+
+    if (!document) {
+      return response(res, false, "Failed", 400, "Something went wrong", {});
+    }
+
+    response(res, true, "Success", 201, "Document uploaded", {});
+  } catch (e) {
+    error(res, e);
   }
 });
 

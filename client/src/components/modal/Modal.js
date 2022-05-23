@@ -57,7 +57,7 @@ const Modal = ({
 }) => {
   const { loading } = useContext(GlobalContext);
   return (
-    <BootstrapDialog open={open} onClose={onClose}>
+    <BootstrapDialog open={open} onClose={onClose} fullWidth>
       <form onSubmit={onSubmit}>
         <BootstrapDialogTitle onClose={onClose}>{title}</BootstrapDialogTitle>
         <DialogContent dividers>
