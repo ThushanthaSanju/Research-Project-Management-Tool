@@ -16,9 +16,6 @@ const researchTopicSchema = new Schema(
         isAccepted: {
             type: Boolean
         }
-    },
-    {
-        timestamps: true,
     }
 );
 

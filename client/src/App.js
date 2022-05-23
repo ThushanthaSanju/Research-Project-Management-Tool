@@ -11,7 +11,7 @@ import Layout from "./components/layout/Layout";
 import theme from "./theme";
 
 // routes
-import { publicRoutes, adminRoutes, studentRoutes } from "./routes";
+import { publicRoutes, adminRoutes, studentRoutes, staffRoutes } from "./routes";
 
 // styles
 import "./App.css";
@@ -32,14 +32,24 @@ function App() {
         {token && (
           <Layout>
             <Routes>
-              {user && user.role === "admin" &&
+              {user &&
+                user.role === "admin" &&
                 adminRoutes.map((item, index) => (
                   <Route key={index} path={item.path} element={item.element} />
-                ))}
-              {user && user.role === "student" &&
+                ))
+              }
+              {user &&
+                user.role === "student" &&
                 studentRoutes.map((item, index) => (
                   <Route key={index} path={item.path} element={item.element} />
-                ))}
+                ))
+              }
+              {user &&
+                user.role === "staff" &&
+                staffRoutes.map((item, index) => (
+                  <Route key={index} path={item.path} element={item.element} />
+                ))
+              }
             </Routes>
           </Layout>
         )}

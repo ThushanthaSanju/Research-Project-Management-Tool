@@ -2,6 +2,8 @@ const mongoose = require("mongoose");
 
 const { Schema, model } = mongoose;
 
+const { USER_ROLES } = require("../enum");
+
 const documentSchema = new Schema(
   {
     file_name: {
@@ -10,11 +12,14 @@ const documentSchema = new Schema(
     },
     submission_type: {
       type: Schema.Types.ObjectId,
-      ref: 'SubmissionType'
+      ref: "SubmissionType",
+      required: true
     },
-  },
-  {
-    timestamps: true,
+    created_by: {
+      type: String,
+      enum: [USER_ROLES.ADMIN, USER_ROLES.STAFF, USER_ROLES.STUDENT],
+      required: true
+    },
   }
 );
 

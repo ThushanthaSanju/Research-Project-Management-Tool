@@ -38,9 +38,6 @@ const groupSchema = new Schema(
     submissions: {
       type: [{ type: Schema.Types.ObjectId, ref: "Document" }],
     },
-  },
-  {
-    timestamps: true,
   }
 );
 

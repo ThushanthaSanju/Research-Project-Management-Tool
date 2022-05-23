@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 import {
   AppBar,
@@ -24,16 +24,21 @@ import {
   Groups as GroupsIcon,
   Article as ArticleIcon,
   CloudUpload as CloudUploadIcon,
-  Dashboard as DashboardIcon
+  Dashboard as DashboardIcon,
+  Forum as ForumIcon,
+  CloudDownload as CloudDownloadIcon,
+  Topic as TopicIcon
 } from "@mui/icons-material";
 
-import httpRequests from '../../services/public-services';
+import httpRequests from "../../services/public-services";
 
 // assets
 import AvatarImg from "../../assets/avatar.jpg";
 import { useState } from "react";
 
 const drawerWidth = 360;
+const user = JSON.parse(localStorage.getItem("user"));
+
 
 // style
 const useStyles = makeStyles({
@@ -124,7 +129,30 @@ const studentNavLinks = [
     label: "Dashboard",
     icon: <DashboardIcon sx={{ color: "black" }} />,
     path: "/dashboard",
-  }
+  },
+  {
+    label: "Submissions",
+    icon: <CloudUploadIcon sx={{ color: "black" }} />,
+    path: '/submissions',
+  },
+  {
+    label: "Download Templates",
+    icon: <CloudDownloadIcon sx={{ color: "black" }} />,
+    path: '/templates',
+  },
+  {
+    label: "Chat",
+    icon: <ForumIcon sx={{ color: "black" }} />,
+    path: `/group-chat/${user?.group || ''}`,
+  },
+];
+
+const staffNavLinks = [
+  {
+    label: "Requests",
+    icon: <TopicIcon sx={{ color: "black" }} />,
+    path: "/",
+  },
 ];
 
 // ListItem
@@ -141,6 +169,7 @@ const ListItem = withStyles({
 const Layout = (props) => {
   const classes = useStyles();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [selected, setSelected] = useState(0);
   const [anchorElUser, setAnchorElUser] = useState(null);
@@ -163,18 +192,18 @@ const Layout = (props) => {
       const { status } = await httpRequests.logout();
 
       if (status === 200) {
-
-        localStorage.removeItem('user');
-        localStorage.removeItem('token');
+        localStorage.removeItem("user");
+        localStorage.removeItem("token");
+        navigate("/sign-in");
         window.location.reload();
-        navigate('/sign-in');
       }
     } catch (error) {
       console.log(error);
     }
   };
-  
-  const user = JSON.parse(localStorage.getItem("user"));
+  if (location.pathname.includes("/group-chat/")) {
+    return <>{props.children}</>;
+  }
 
   return (
     <Box sx={{ display: "flex" }}>
@@ -243,6 +272,23 @@ const Layout = (props) => {
               ))}
             {user.role === "student" &&
               studentNavLinks.map(({ label, icon, path }, index) => (
+                <ListItem
+                  key={index}
+                  selected={selected === index}
+                  onClick={(event) => listItemClickHandler(event, index, path)}
+                >
+                  <ListItemButton>
+                    <ListItemIcon>{icon}</ListItemIcon>
+                    <ListItemText
+                      disableTypography
+                      className={classes.navText}
+                      primary={label}
+                    />
+                  </ListItemButton>
+                </ListItem>
+              ))}
+            {user.role === "staff" &&
+              staffNavLinks.map(({ label, icon, path }, index) => (
                 <ListItem
                   key={index}
                   selected={selected === index}
