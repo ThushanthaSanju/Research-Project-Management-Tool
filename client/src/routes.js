@@ -7,6 +7,12 @@ import SignUp from "./pages/auth/SignUp";
 import Submissions from "./pages/admin/submissions/Submissions";
 import MarkingSchema from "./pages/admin/markingSchemas/MarkingSchema";
 import Dashboard from "./pages/student/dashboard/Dashboard";
+import Chat from "./pages/chat/Chat";
+import PanelMembers from './pages/admin/panelMembers/PanelMembers';
+import Uploads from './pages/admin/uploads/Uploads';
+import StudentUploads from './pages/student/submissions/Uploads';
+import Templates from './pages/student/templates/Templates';
+import Requests from './pages/staff/requests/Requests';
 
 export const publicRoutes = [
   {
@@ -38,7 +44,7 @@ export const adminRoutes = [
   },
   {
     path: "/panels",
-    element: <h6>Panel Members</h6>,
+    element: <PanelMembers />,
   },
   {
     path: "/schemas",
@@ -46,7 +52,7 @@ export const adminRoutes = [
   },
   {
     path: "/uploads",
-    element: <h6>Uploads</h6>,
+    element: <Uploads />,
   },
 ];
 
@@ -58,6 +64,29 @@ export const studentRoutes = [
   {
     path: '/sign-up',
     element: <Dashboard />
+  },
+  {
+    path: "/dashboard",
+    element: <Navigate to="/" replace />,
+  },
+  {
+    path: "/group-chat/:id",
+    element: <Chat />,
+  },
+  {
+    path: "/submissions",
+    element: <StudentUploads />,
+  },
+  {
+    path: "/templates",
+    element: <Templates />,
+  },
+];
+
+export const staffRoutes = [
+  {
+    path: '/',
+    element: <Requests />
   },
   {
     path: "/dashboard",

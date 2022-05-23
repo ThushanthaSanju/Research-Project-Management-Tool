@@ -6,6 +6,20 @@ const SUBMISSION_TYPES = {
   FINAL: "final",
 };
 
+const USER_ROLES = {
+  ADMIN: 'admin',
+  STUDENT: 'student',
+  STAFF: 'staff'
+}
+
+const RESEARCH_TOPIC_STATUS = {
+  PENDING: 'pending',
+  ACCEPTED: 'accepted',
+  REJECTED: 'rejected'
+}
+
 module.exports = {
   SUBMISSION_TYPES,
+  USER_ROLES,
+  RESEARCH_TOPIC_STATUS
 };

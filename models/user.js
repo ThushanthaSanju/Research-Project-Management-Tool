@@ -40,12 +40,17 @@ const userSchema = new Schema(
           throw new Error('password cannot contain "password"');
         }
       },
+      required: true
     },
     role: {
       type: String,
       default: "student",
       enum: ["student", "admin", "staff"],
       required: true,
+    },
+    group: {
+      type: Schema.Types.ObjectId,
+      ref: 'Group'
     },
     tokens: [
       {
@@ -54,14 +59,7 @@ const userSchema = new Schema(
           required: true,
         },
       },
-    ],
-    group: {
-      type: Schema.Types.ObjectId,
-      ref: 'Group'
-    },
-  },
-  {
-    timestamps: true,
+    ]
   }
 );
 
