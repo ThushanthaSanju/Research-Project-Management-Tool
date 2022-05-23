@@ -1,4 +1,4 @@
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import {
   AppBar,
@@ -24,21 +24,16 @@ import {
   Groups as GroupsIcon,
   Article as ArticleIcon,
   CloudUpload as CloudUploadIcon,
-  Dashboard as DashboardIcon,
-  Forum as ForumIcon
+  Dashboard as DashboardIcon
 } from "@mui/icons-material";
 
-import httpRequests from "../../services/public-services";
-
-
+import httpRequests from '../../services/public-services';
 
 // assets
 import AvatarImg from "../../assets/avatar.jpg";
 import { useState } from "react";
 
 const drawerWidth = 360;
-const user = JSON.parse(localStorage.getItem("user"));
-
 
 // style
 const useStyles = makeStyles({
@@ -129,17 +124,7 @@ const studentNavLinks = [
     label: "Dashboard",
     icon: <DashboardIcon sx={{ color: "black" }} />,
     path: "/dashboard",
-  },
-  {
-    label: "Submissions",
-    icon: <CloudUploadIcon sx={{ color: "black" }} />,
-    path: '/submissions',
-  },
-  {
-    label: "Chat",
-    icon: <ForumIcon sx={{ color: "black" }} />,
-    path: `/group-chat/${user?.group || ''}`,
-  },
+  }
 ];
 
 // ListItem
@@ -156,7 +141,6 @@ const ListItem = withStyles({
 const Layout = (props) => {
   const classes = useStyles();
   const navigate = useNavigate();
-  const location = useLocation();
 
   const [selected, setSelected] = useState(0);
   const [anchorElUser, setAnchorElUser] = useState(null);
@@ -179,20 +163,18 @@ const Layout = (props) => {
       const { status } = await httpRequests.logout();
 
       if (status === 200) {
-        localStorage.removeItem("user");
-        localStorage.removeItem("token");
-        navigate("/sign-in");
+
+        localStorage.removeItem('user');
+        localStorage.removeItem('token');
         window.location.reload();
+        navigate('/sign-in');
       }
     } catch (error) {
       console.log(error);
     }
   };
-  console.log(location);
-  if (location.pathname.includes("/group-chat/")) {
-    console.log('hello');
-    return <>{props.children}</>;
-  }
+  
+  const user = JSON.parse(localStorage.getItem("user"));
 
   return (
     <Box sx={{ display: "flex" }}>

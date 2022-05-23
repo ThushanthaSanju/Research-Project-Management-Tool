@@ -7,10 +7,6 @@ import SignUp from "./pages/auth/SignUp";
 import Submissions from "./pages/admin/submissions/Submissions";
 import MarkingSchema from "./pages/admin/markingSchemas/MarkingSchema";
 import Dashboard from "./pages/student/dashboard/Dashboard";
-import Chat from "./pages/chat/Chat";
-import PanelMembers from './pages/admin/panelMembers/PanelMembers';
-import Uploads from './pages/admin/uploads/Uploads';
-import StudentUploads from './pages/student/submissions/Uploads';
 
 export const publicRoutes = [
   {
@@ -42,7 +38,7 @@ export const adminRoutes = [
   },
   {
     path: "/panels",
-    element: <PanelMembers />,
+    element: <h6>Panel Members</h6>,
   },
   {
     path: "/schemas",
@@ -50,7 +46,7 @@ export const adminRoutes = [
   },
   {
     path: "/uploads",
-    element: <Uploads />,
+    element: <h6>Uploads</h6>,
   },
 ];
 
@@ -67,12 +63,4 @@ export const studentRoutes = [
     path: "/dashboard",
     element: <Navigate to="/" replace />,
   },
-  {
-    path: "/group-chat/:id",
-    element: <Chat />,
-  },
-  {
-    path: "/submissions",
-    element: <StudentUploads />,
-  },
-];
+]
