@@ -1,5 +1,7 @@
 import { useState } from "react";
 import Context from "./global-context";
+import { io } from 'socket.io-client';
+const socket = io("http://localhost:5000");
 
 const GlobalProvider = (props) => {
   const [open, setOpen] = useState(false);
@@ -24,12 +26,13 @@ const GlobalProvider = (props) => {
 
   const loadingHandler = (value) => {
     setLoading(value);
-  }
+  };
 
   const context = {
     open,
     notify,
     loading,
+    socket,
     onModalOpen: modalOpenHandler,
     onModalClose: modalCloseHandler,
     onNotifyOpen: notifyOpenHandler,

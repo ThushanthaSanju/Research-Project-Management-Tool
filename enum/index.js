@@ -6,6 +6,13 @@ const SUBMISSION_TYPES = {
   FINAL: "final",
 };
 
+const USER_ROLES = {
+  ADMIN: 'admin',
+  STUDENT: 'student',
+  STAFF: 'staff'
+}
+
 module.exports = {
   SUBMISSION_TYPES,
+  USER_ROLES
 };

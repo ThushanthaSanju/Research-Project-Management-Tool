@@ -1,9 +1,14 @@
 import http from "../config/httpHelper";
 
 const httpRequests = {
-  getProfile: (data) => http.get(`/students/profile/${'6282621b7a37d161a46c0680'}`),
+  getProfile: (data) => http.get(`/students/profile/${data}`),
   getStudents: () => http.get('/students'),
-  postGroup: (data) => http.post('/students/groups', data)
+  getSubmissionTypes: () => http.get('/students/submissions'),
+  getTemplates: () => http.get('/students/templates'),
+  postGroup: (data) => http.post('/students/groups', data),
+  postResearchTopic: (data) => http.post('/research-topics', data),
+  postRequest: (data) => http.post('/requests', data),
+  postSubmission: (data, config) => http.post('/students/submissions', data, config),
 };
 
 export default httpRequests;
