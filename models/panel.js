@@ -17,9 +17,6 @@ const panelSchema = new Schema(
             }],
             validate: [arrayLimit, '{PATH} exceeds the limit of 4']
         }
-    },
-    {
-        timestamps: true,
     }
 );
 

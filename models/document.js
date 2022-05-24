@@ -20,9 +20,6 @@ const documentSchema = new Schema(
       enum: [USER_ROLES.ADMIN, USER_ROLES.STAFF, USER_ROLES.STUDENT],
       required: true
     },
-  },
-  {
-    timestamps: true,
   }
 );
 

@@ -26,7 +26,8 @@ import {
   CloudUpload as CloudUploadIcon,
   Dashboard as DashboardIcon,
   Forum as ForumIcon,
-  CloudDownload as CloudDownloadIcon
+  CloudDownload as CloudDownloadIcon,
+  Topic as TopicIcon
 } from "@mui/icons-material";
 
 import httpRequests from "../../services/public-services";
@@ -143,6 +144,14 @@ const studentNavLinks = [
     label: "Chat",
     icon: <ForumIcon sx={{ color: "black" }} />,
     path: `/group-chat/${user?.group || ''}`,
+  },
+];
+
+const staffNavLinks = [
+  {
+    label: "Requests",
+    icon: <TopicIcon sx={{ color: "black" }} />,
+    path: "/",
   },
 ];
 
@@ -265,6 +274,23 @@ const Layout = (props) => {
               ))}
             {user.role === "student" &&
               studentNavLinks.map(({ label, icon, path }, index) => (
+                <ListItem
+                  key={index}
+                  selected={selected === index}
+                  onClick={(event) => listItemClickHandler(event, index, path)}
+                >
+                  <ListItemButton>
+                    <ListItemIcon>{icon}</ListItemIcon>
+                    <ListItemText
+                      disableTypography
+                      className={classes.navText}
+                      primary={label}
+                    />
+                  </ListItemButton>
+                </ListItem>
+              ))}
+            {user.role === "staff" &&
+              staffNavLinks.map(({ label, icon, path }, index) => (
                 <ListItem
                   key={index}
                   selected={selected === index}

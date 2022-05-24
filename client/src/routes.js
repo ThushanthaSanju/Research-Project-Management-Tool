@@ -12,6 +12,7 @@ import PanelMembers from './pages/admin/panelMembers/PanelMembers';
 import Uploads from './pages/admin/uploads/Uploads';
 import StudentUploads from './pages/student/submissions/Uploads';
 import Templates from './pages/student/templates/Templates';
+import Requests from './pages/staff/requests/Requests';
 
 export const publicRoutes = [
   {
@@ -81,3 +82,14 @@ export const studentRoutes = [
     element: <Templates />,
   },
 ];
+
+export const staffRoutes = [
+  {
+    path: '/',
+    element: <Requests />
+  },
+  {
+    path: "/dashboard",
+    element: <Navigate to="/" replace />,
+  },
+]

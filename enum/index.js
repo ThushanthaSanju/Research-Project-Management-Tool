@@ -14,5 +14,13 @@ const USER_ROLES = {
 
 module.exports = {
   SUBMISSION_TYPES,
-  USER_ROLES
-};
+  USER_ROLES,
+}
+
+const RESEARCH_TOPIC_STATUS = {
+  PENDING: 'pending',
+  ACCEPTED: 'accepted',
+  REJECTED: 'rejected'
+}
+
+

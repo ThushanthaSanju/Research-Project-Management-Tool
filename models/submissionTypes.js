@@ -22,9 +22,6 @@ const submissionSchema = new Schema(
       ],
       required: true,
     },
-  },
-  {
-    timestamps: true,
   }
 );
 

@@ -2,12 +2,18 @@ import { Grid, Typography } from "@mui/material";
 import {
   Error as ErrorIcon,
   Verified as VerifiedIcon,
+  Pending as PendingIcon,
 } from "@mui/icons-material";
 
 // components
 import Button from "../../../components/button/Button";
 
-const CoSupervisorRow = ({ profile, classes, onButtonClick }) => {
+const CoSupervisorRow = ({
+  status = null,
+  profile,
+  classes,
+  onButtonClick,
+}) => {
   return (
     <>
       <Grid item xs={3}>
@@ -15,7 +21,10 @@ const CoSupervisorRow = ({ profile, classes, onButtonClick }) => {
       </Grid>
       <Grid container item spacing={2} xs={4} direction="row">
         <Grid item xs={1}>
-          {!profile?.group.coSupervisor && (
+          {status && status === "pending" && (
+            <PendingIcon fontSize="large" className={classes.icon} />
+          )}
+          {(!status || status === 'rejected') && !profile?.group.coSupervisor && (
             <ErrorIcon fontSize="large" className={classes.icon} />
           )}
           {profile?.group.coSupervisor && (
@@ -37,7 +46,7 @@ const CoSupervisorRow = ({ profile, classes, onButtonClick }) => {
           <Button
             label="Request"
             onClick={onButtonClick.bind(null, "co-supervisor")}
-            disabled={!!profile?.group.coSupervisor}
+            disabled={!!profile?.group.coSupervisor || !!(status && status === 'pending')}
           />
         </Grid>
       </Grid>

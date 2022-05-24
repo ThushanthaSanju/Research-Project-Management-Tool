@@ -34,6 +34,7 @@ const Dashboard = () => {
     useContext(GlobalContext);
 
   const [profile, setProfile] = useState();
+  const [requests, setRequests] = useState([]);
   const [name, setName] = useState("");
   const [students, setStudents] = useState([
     JSON.parse(localStorage.getItem("user"))._id,
@@ -194,6 +195,7 @@ const Dashboard = () => {
       await service.postGroup({ name, students });
       onLoading(false);
       onModalClose();
+      fetchProfile();
       return;
     }
   };
@@ -211,6 +213,7 @@ const Dashboard = () => {
         });
         onLoading(false);
         onModalClose();
+        fetchProfile();
       } catch (error) {
         onLoading(false);
         onModalClose();
@@ -227,12 +230,13 @@ const Dashboard = () => {
       try {
         onLoading(true);
         await service.postRequest({
-          researchTopic: "",
+          researchTopic: profile.group.researchTopic._id,
           staffMember: supervisor,
           researchRole: "supervisor",
         });
         onLoading(false);
         onModalClose();
+        fetchProfile()
       } catch (error) {
         onLoading(false);
         onModalClose();
@@ -249,12 +253,13 @@ const Dashboard = () => {
       try {
         onLoading(true);
         await service.postRequest({
-          researchTopic: "",
+          researchTopic: profile.group.researchTopic._id,
           staffMember: coSupervisor,
           researchRole: "coSupervisor",
         });
         onLoading(false);
         onModalClose();
+        fetchProfile();
       } catch (error) {
         onLoading(false);
         onModalClose();
@@ -270,9 +275,30 @@ const Dashboard = () => {
 
     if (response.status === 200) {
       setProfile(response.data.body.user);
+      fetchRequestStatus(response.data.body.user.group._id);
     }
     onLoading(false);
   };
+
+  const fetchRequestStatus = async (id) => {
+    try {
+      const response = await service.postRequestStatus({ group: id });
+
+      if (response.status === 200) {
+        setRequests(response.data.body.requests);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+    onLoading(false);
+  };
+
+  const supervisorStatus = requests.filter(
+    (request) => request.researchRole === "supervisor"
+  );
+  const coSupervisorStatus = requests.filter(
+    (request) => request.researchRole === "coSupervisor"
+  );
 
   useEffect(() => {
     fetchProfile();
@@ -299,12 +325,14 @@ const Dashboard = () => {
             />
             <Grid item xs={12} />
             <SupervisorRow
+              status={supervisorStatus[0]?.status}
               profile={profile}
               classes={classes}
               onButtonClick={onButtonClick}
             />
             <Grid item xs={12} />
             <CoSupervisorRow
+              status={coSupervisorStatus[0]?.status}
               profile={profile}
               classes={classes}
               onButtonClick={onButtonClick}

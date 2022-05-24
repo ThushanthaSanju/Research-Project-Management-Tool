@@ -14,8 +14,9 @@ const studentRoute = require('../middleware/studentRoute');
 // create request
 router.post('/api/requests', auth, studentRoute, async (req, res) => {
     try {
-        const { researchTopic, staffMember, researchRole } = req.body;
+        const { researchTopic, staffMember } = req.body;
 
+        // validations
         const isValidResearchTopic = await ResearchTopic.findOne({ _id: researchTopic });
         const isValidStaffMember = await User.findOne({ _id: staffMember, role: 'staff' });
 
@@ -27,8 +28,10 @@ router.post('/api/requests', auth, studentRoute, async (req, res) => {
             return response(res, false, 'Failed', 404, "Staff member not found!");
         }
 
-        const countExistRequests = await Request.find({ researchTopic }).count();
+        // count requests for current research topic
+        const countExistRequests = await Request.find({ researchTopic, status: 'accepted' }).count();
 
+        // if the count is 2 
         if (countExistRequests === 2) {
             return response(res, false, 'Failed', 500, `Already created two requests for '${isValidResearchTopic.title}'`);
         }
@@ -39,7 +42,7 @@ router.post('/api/requests', auth, studentRoute, async (req, res) => {
             return response(res, false, 'Failed', 500, "Request already created!");
         }
 
-        const request = new Request(req.body);
+        const request = new Request({ ...req.body, group: req.user.group.toString() });
 
         await request.save();
 
@@ -80,6 +83,7 @@ router.get('/api/requests', auth, staffRoute, async (req, res) => {
 
         array.forEach((request) => {
             requests.push({
+                '_id': request._id,
                 title: request.researchTopic.title,
                 groupName: request.researchTopic.group.name,
                 researchRole: request.researchRole,
@@ -88,6 +92,18 @@ router.get('/api/requests', auth, staffRoute, async (req, res) => {
         });
 
         response(res, true, 'Success', 200, "Research topics fetched successfully", { requests });
+    } catch (e) {
+        error(res, e);
+    }
+});
+
+// read request status
+router.post('/api/requests/status', auth, async (req, res) => {
+
+    try {
+        const requests = await Request.find({ 'group': req.user.group.toString() });
+
+        response(res, true, 'Success', 200, "Requests related to your group", { requests });
     } catch (e) {
         error(res, e);
     }
@@ -117,11 +133,16 @@ router.patch('/api/requests/:id/status', auth, staffRoute, async (req, res) => {
         }
 
         if (status === 'accepted') {
-            const group = await Group.findOneAndUpdate({ _id: request.researchTopic.group }, { [request.researchRole]: request.staffMember }, { new: true });
+            const group = await Group.findOneAndUpdate({ _id: request.researchTopic.group }, { [request.researchRole]: req.user.id }, { new: true });
 
             if (!group) {
                 return response(res, false, 'Failed', 404, "Group not found!");
             }
+        }
+
+        if (status === 'rejected') {
+            await Request.findOneAndRemove({ id: request._id });
+            return response(res, false, 'Success', 400, "Request deleted");
         }
 
         request.status = status;

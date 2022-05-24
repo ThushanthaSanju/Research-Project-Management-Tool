@@ -40,6 +40,7 @@ const userSchema = new Schema(
           throw new Error('password cannot contain "password"');
         }
       },
+      required: true
     },
     role: {
       type: String,

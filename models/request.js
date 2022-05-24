@@ -7,6 +7,10 @@ const requestSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'ResearchTopic'
     },
+    group: {
+        type: Schema.Types.ObjectId,
+        ref: 'Group'
+    },
     staffMember: {
         type: Schema.Types.ObjectId,
         ref: 'User'
@@ -20,10 +24,7 @@ const requestSchema = new Schema({
         default: 'pending',
         enum: ['accepted', 'rejected', 'pending']
     }
-},
-    {
-        timestamps: true,
-    }
+}
 );
 
 requestSchema.methods.toJSON = function () {

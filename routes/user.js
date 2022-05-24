@@ -2,15 +2,19 @@ const { Router } = require('express');
 const router = Router();
 const auth = require('../middleware/auth');
 
+// model
 const User = require('../models/user');
+
+// response helpers
 const { response, error } = require('../helpers/responseHelper');
+const { deleteFieldsInOne } = require('../helpers/deleteFields');
 
 // register
 router.post('/api/users', async (req, res) => {
     try {
         const user = new User(req.body);
-        const token = await user.generateAuthToken();
 
+        const token = await user.generateAuthToken();
         await user.save();
 
         response(res, true, 'Created', 201, "user logged in", { user, token });
@@ -28,6 +32,22 @@ router.post('/api/users/login', async (req, res) => {
         await user.populate('group');
 
         response(res, true, 'Success', 200, "user logged in", { user, token });
+        await user.populate({
+            path: 'group',
+            model: 'Group',
+            populate: {
+                path: 'researchTopic',
+                model: 'ResearchTopic'
+            }
+        });
+
+        const userObject = deleteFieldsInOne(user, [
+            'password', 'tokens', 'group.students', 'group.createdAt', 'group.updatedAt',
+            'group.__v', 'group.researchTopic._id', 'group.researchTopic.group',
+            'group.researchTopic.createdAt', 'group.researchTopic.updatedAt', 'group.researchTopic.__v'
+        ]);
+
+        response(res, true, 'Success', 200, "user logged in", { user: userObject, token });
     } catch (e) {
         error(res, e);
     }
@@ -45,16 +65,6 @@ router.post('/api/users/logout', auth, async (req, res) => {
         await user.save();
 
         response(res, true, 'Success', 200, "user logged out");
-    } catch (e) {
-        error(res, e);
-    }
-});
-
-// fetch logged in user's profile
-router.get('/api/users/me', auth, async (req, res) => {
-    try {
-        const { user } = req;
-        response(res, true, 'Success', 200, "Profile fetched", { user });
     } catch (e) {
         error(res, e);
     }

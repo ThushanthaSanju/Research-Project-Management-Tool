@@ -5,6 +5,7 @@ const httpRequests = {
   getStudents: () => http.get('/students'),
   getSubmissionTypes: () => http.get('/students/submissions'),
   getTemplates: () => http.get('/students/templates'),
+  postRequestStatus: () => http.post('/requests/status'),
   postGroup: (data) => http.post('/students/groups', data),
   postResearchTopic: (data) => http.post('/research-topics', data),
   postRequest: (data) => http.post('/requests', data),

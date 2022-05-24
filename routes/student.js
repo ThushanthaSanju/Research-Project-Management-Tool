@@ -71,7 +71,7 @@ router.get("/api/students/submissions", auth, async (req, res) => {
 });
 
 // read specific student
-router.get("/api/students/:id", auth, async (req, res) => {
+router.get("/api/students/:id", auth, studentRoute, async (req, res) => {
   try {
     const student = await User.findOne({ _id: req.params.id });
 
@@ -108,14 +108,20 @@ router.get("/api/students/profile/:id", async (req, res) => {
   }
 });
 
-// create group
-router.post("/api/students/groups", auth, studentRoute, async (req, res) => {
+
+// document submission
+router.post("/api/students/submissions", upload.single("file"), async (req, res) => {
   try {
     const { students } = req.body;
 
     const group = new Group(req.body);
+    const { group_id, type_id } = req.body;
 
-    await group.save();
+    const document = new Document({
+      file_name: req.file.filename,
+      submission_type: type_id,
+      created_by: USER_ROLES.STUDENT
+    });
 
     if (!group) {
       return response(res, false, "Failed", 400, "Group creation failed!");
@@ -130,10 +136,20 @@ router.post("/api/students/groups", auth, studentRoute, async (req, res) => {
     });
 
     response(res, true, "Success", 201, "Group creation successful", { group });
+    await document.save();
+
+    if (!document) {
+      response(res, false, "Failed", 400, "Operation failed", {});
+    }
+
+    await Group.updateOne({ _id: group_id }, { $push: { submissions: document } });
+
+    response(res, true, "Success", 201, "Document uploaded successful", { document });
   } catch (e) {
     error(res, e);
   }
-});
+}
+);
 
 // document submission
 router.post(
