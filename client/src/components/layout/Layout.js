@@ -201,7 +201,9 @@ const Layout = (props) => {
       console.log(error);
     }
   };
+  console.log(location);
   if (location.pathname.includes("/group-chat/")) {
+    console.log('hello');
     return <>{props.children}</>;
   }
 

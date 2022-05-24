@@ -29,6 +29,9 @@ router.post('/api/users/login', async (req, res) => {
         const user = await User.findByCredentials(req.body.email, req.body.password);
         const token = await user.generateAuthToken();
 
+        await user.populate('group');
+
+        response(res, true, 'Success', 200, "user logged in", { user, token });
         await user.populate({
             path: 'group',
             model: 'Group',

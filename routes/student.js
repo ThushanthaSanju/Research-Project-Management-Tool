@@ -13,7 +13,7 @@ const SubmissionTypes = require("../models/submissionTypes");
 const Document = require("../models/document");
 
 // enum
-const { USER_ROLES } = require('../enum');
+const { USER_ROLES } = require('../enum')
 
 // response helper
 const { response, error } = require("../helpers/responseHelper");
@@ -51,13 +51,20 @@ router.get("/api/students/templates", auth, studentRoute, async (req, res) => {
   } catch (e) {
     return error(res, e);
   }
-});
+})
 
 router.get("/api/students/submissions", auth, async (req, res) => {
   try {
     const submissions = await SubmissionTypes.find({});
 
-    return response(res, true, "Success", 200, "Submissions fetched successfully", { submissions });
+    return response(
+      res,
+      true,
+      "Success",
+      200,
+      "Submissions fetched successfully",
+      { submissions }
+    );
   } catch (e) {
     error(res, e);
   }
@@ -105,6 +112,9 @@ router.get("/api/students/profile/:id", async (req, res) => {
 // document submission
 router.post("/api/students/submissions", upload.single("file"), async (req, res) => {
   try {
+    const { students } = req.body;
+
+    const group = new Group(req.body);
     const { group_id, type_id } = req.body;
 
     const document = new Document({
@@ -113,6 +123,19 @@ router.post("/api/students/submissions", upload.single("file"), async (req, res)
       created_by: USER_ROLES.STUDENT
     });
 
+    if (!group) {
+      return response(res, false, "Failed", 400, "Group creation failed!");
+    }
+
+    students.forEach(async (student) => {
+      await User.findOneAndUpdate(
+        { _id: student },
+        { group: group._id },
+        { new: true }
+      );
+    });
+
+    response(res, true, "Success", 201, "Group creation successful", { group });
     await document.save();
 
     if (!document) {
@@ -126,6 +149,39 @@ router.post("/api/students/submissions", upload.single("file"), async (req, res)
     error(res, e);
   }
 }
+);
+
+// document submission
+router.post(
+  "/api/students/submissions",
+  upload.single("file"),
+  async (req, res) => {
+    try {
+      const { group_id, type_id } = req.body;
+
+      const obj = new Document({
+        file_name: req.file.filename,
+        submission_type: type_id,
+        created_by: USER_ROLES.STUDENT
+      });
+
+      const document = await obj.save();
+
+      if (!document) {
+        response(res, false, "Failed", 400, "Operation failed", { });
+      }
+
+      const group = await Group.updateOne(
+        { _id: group_id },
+        { $push: { submissions: document } }
+      );
+
+      response(res, true, "Success", 201, "Document uploaded successful", { document });
+
+    } catch (e) {
+      error(res, e);
+    }
+  }
 );
 
 module.exports = router;

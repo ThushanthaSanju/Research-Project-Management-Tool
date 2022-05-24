@@ -12,14 +12,15 @@ const USER_ROLES = {
   STAFF: 'staff'
 }
 
+module.exports = {
+  SUBMISSION_TYPES,
+  USER_ROLES,
+}
+
 const RESEARCH_TOPIC_STATUS = {
   PENDING: 'pending',
   ACCEPTED: 'accepted',
   REJECTED: 'rejected'
 }
 
-module.exports = {
-  SUBMISSION_TYPES,
-  USER_ROLES,
-  RESEARCH_TOPIC_STATUS
-};
+

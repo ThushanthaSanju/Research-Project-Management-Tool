@@ -290,6 +290,7 @@ const Dashboard = () => {
     } catch (error) {
       console.log(error);
     }
+    onLoading(false);
   };
 
   const supervisorStatus = requests.filter(
@@ -375,7 +376,7 @@ const Dashboard = () => {
                 if (event.target.name === "supervisor") {
                   setSupervisor(event.target.value);
                 }
-                if (event.target.name === "coSupervisor") {
+                if (event.target.name === 'coSupervisor') {
                   setCoSupervisor(event.target.value);
                 }
               }}
