@@ -65,19 +65,23 @@ app.use(cors());
 app.use(express.json());
 
 const userRoute = require('./routes/user');
-const adminRoute = require('./routes/admin');
-const studentRoute = require('./routes/student');
 const groupRoute = require('./routes/group');
 const researchTopicRoute = require('./routes/researchTopic');
 const requestRoute = require('./routes/request');
+const documentRoute = require('./routes/document');
+const markingSchemaRoute = require('./routes/markingSchema');
+const panelRoute = require('./routes/panel');
+const submissionTypesRoute = require('./routes/submissionTypes');
 
 app.use('/images', express.static('public'));
 app.use(userRoute);
-app.use(adminRoute);
-app.use(studentRoute);
 app.use(groupRoute);
 app.use(researchTopicRoute);
 app.use(requestRoute);
+app.use(documentRoute);
+app.use(markingSchemaRoute);
+app.use(panelRoute);
+app.use(submissionTypesRoute);
 
 server.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);

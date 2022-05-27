@@ -13,6 +13,8 @@ import Uploads from './pages/admin/uploads/Uploads';
 import StudentUploads from './pages/student/submissions/Uploads';
 import Templates from './pages/student/templates/Templates';
 import Requests from './pages/staff/requests/Requests';
+import Documents from './pages/staff/documents/Documents';
+import Topics from './pages/staff/topic/Topics';
 
 export const publicRoutes = [
   {
@@ -87,6 +89,14 @@ export const staffRoutes = [
   {
     path: '/',
     element: <Requests />
+  },
+  {
+    path: '/documents',
+    element: <Documents />
+  },
+  {
+    path: '/topics',
+    element: <Topics />
   },
   {
     path: "/dashboard",

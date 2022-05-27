@@ -134,19 +134,24 @@ const Users = () => {
   };
 
   const fetchUsers = async () => {
-    onLoading(true);
-    const response = await service.getUsers(role);
-    if (response.status) {
-      if (response.data.body && response.data.body.users) {
-        setRows(response.data.body.users);
+    try {
+      onLoading(true);
+      const response = await service.getUsers(role);
+      if (response.status) {
+        if (response.data.body && response.data.body.users) {
+          setRows(response.data.body.users);
+        }
       }
+      onLoading(false);
+    } catch (error) {
+      onLoading(false);
+      console.log(error);
     }
-    onLoading(false);
   };
 
   useEffect(() => {
     fetchUsers();
-  }, [role]);
+  }, []);
 
   const columns = [
     ...gridColumns,
@@ -203,7 +208,7 @@ const Users = () => {
   );
 
   return (
-    <>
+    <div style={{ minHeight: '400px' }}>
       <Grid container spacing={2}>
         <Grid container item xs={2}>
           <Grid item xs={6}>
@@ -248,7 +253,7 @@ const Users = () => {
         onSubmit={submitHandler}
       />
       <Notify open={notify} message="User deleted successfully" />
-    </>
+    </div>
   );
 };
 

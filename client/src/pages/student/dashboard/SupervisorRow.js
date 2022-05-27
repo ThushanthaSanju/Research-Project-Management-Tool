@@ -17,7 +17,7 @@ const SupervisorRow = ({ status = null, profile, classes, onButtonClick }) => {
       </Grid>
       <Grid container item spacing={2} xs={4} direction="row">
         <Grid item xs={1}>
-          {status && status === "pending" && (
+          {status && status === "PENDING" && (
             <PendingIcon fontSize="large" className={classes.icon} />
           )}
           {!status && !profile?.group.supervisor && (
@@ -31,7 +31,7 @@ const SupervisorRow = ({ status = null, profile, classes, onButtonClick }) => {
             />
           )}
         </Grid>
-        <Grid item xs={4} mt={1} ml={2}>
+        <Grid item xs={6} mt={1} ml={2}>
           <Typography variant="subtitle2">
             {profile?.group.supervisor
               ? profile.group.supervisor.email

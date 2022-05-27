@@ -47,7 +47,12 @@ const Dashboard = () => {
   });
   const [type, setType] = useState("group");
   const [topicTitle, setTopicTitle] = useState("");
+  const [topicIntroduction, setTopicIntroduction] = useState("");
   const [topicTitleError, setTopicTitleError] = useState({
+    error: false,
+    text: "",
+  });
+  const [topicIntroductionError, setTopicIntroductionError] = useState({
     error: false,
     text: "",
   });
@@ -66,6 +71,18 @@ const Dashboard = () => {
     setType(formType);
     onModalOpen();
   };
+
+  const onChangeHandler = (event) => {
+    const { name, value } = event.target;
+
+    if (name === 'title') {
+      setTopicTitle(value);
+    }
+
+    if (name === 'introduction') {
+      setTopicIntroduction(value);
+    }
+  }
 
   // validate supervisor form inpus
   const supervisorValidate = () => {
@@ -91,6 +108,11 @@ const Dashboard = () => {
   const topicValidate = () => {
     if (topicTitle.trim() === "") {
       setTopicTitleError({ error: true, text: "Title is required" });
+      return false;
+    }
+
+    if (topicIntroduction.trim() === "") {
+      setTopicIntroduction({ error: true, text: "Introduction is required" });
       return false;
     }
 
@@ -207,10 +229,22 @@ const Dashboard = () => {
     if (topicValidate()) {
       try {
         onLoading(true);
-        await service.postResearchTopic({
-          title: topicTitle,
-          group: profile.group._id,
-        });
+
+        // update research topic
+        if (profile.group?.researchTopic) {
+          await service.patchResearchTopic({
+            _id: profile.group.researchTopic._id,
+            title: topicTitle,
+            introduction: topicIntroduction,
+            group: profile.group._id,
+          });
+        } else {
+          await service.postResearchTopic({
+            title: topicTitle,
+            introduction: topicIntroduction,
+            group: profile.group._id,
+          });
+        }
         onLoading(false);
         onModalClose();
         fetchProfile();
@@ -236,7 +270,7 @@ const Dashboard = () => {
         });
         onLoading(false);
         onModalClose();
-        fetchProfile()
+        fetchProfile();
       } catch (error) {
         onLoading(false);
         onModalClose();
@@ -290,7 +324,6 @@ const Dashboard = () => {
     } catch (error) {
       console.log(error);
     }
-    onLoading(false);
   };
 
   const supervisorStatus = requests.filter(
@@ -305,8 +338,8 @@ const Dashboard = () => {
   }, []);
 
   return (
-    <>
-      <Grid container spacing={2} sx={{ minHeight: "400px" }}>
+    <div style={{ minHeight: "400px" }}>
+      <Grid container spacing={2}>
         {loading && (
           <CircularProgress sx={{ marginLeft: "50%", marginTop: "10%" }} />
         )}
@@ -353,10 +386,16 @@ const Dashboard = () => {
             />
           ) : type === "topic" ? (
             <ResearchTopicForm
-              value={topicTitle}
-              error={topicTitleError.error}
-              helperText={topicTitleError.text}
-              onChange={(event) => setTopicTitle(event.target.value)}
+              values={{ title: topicTitle, introduction: topicIntroduction }}
+              errors={{
+                title: topicTitleError.error,
+                introduction: topicIntroductionError.error,
+              }}
+              helperTexts={{
+                title: topicTitleError.text,
+                introduction: topicIntroductionError.text,
+              }}
+              onChange={onChangeHandler}
             />
           ) : (
             <RequestSupervisorForm
@@ -376,7 +415,7 @@ const Dashboard = () => {
                 if (event.target.name === "supervisor") {
                   setSupervisor(event.target.value);
                 }
-                if (event.target.name === 'coSupervisor') {
+                if (event.target.name === "coSupervisor") {
                   setCoSupervisor(event.target.value);
                 }
               }}
@@ -394,7 +433,7 @@ const Dashboard = () => {
             : requestCoSupervisorSubmitHandler
         }
       />
-    </>
+    </div>
   );
 };
 

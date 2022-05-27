@@ -148,7 +148,7 @@ const Uploads = () => {
   }, []);
 
   return (
-    <>
+    <div style={{ minHeight: '400px' }}>
       <Grid container spacing={2}>
         <Grid item xs={6} />
         <Grid item xs={6}>
@@ -190,7 +190,7 @@ const Uploads = () => {
         onClose={onModalCloseHandler}
         onSubmit={submitHandler}
       />
-    </>
+    </div>
   );
 };
 

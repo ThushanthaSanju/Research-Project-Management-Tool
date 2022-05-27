@@ -18,6 +18,16 @@ const markingSchema = new Schema(
   }
 );
 
+markingSchema.methods.toJSON = function () {
+  const markingSchemaObject = this.toObject();
+
+  delete markingSchemaObject.createdAt;
+  delete markingSchemaObject.updatedAt;
+  delete markingSchemaObject.__v;
+
+  return markingSchemaObject;
+};
+
 const MarkingSchema = model("MarkingSchema", markingSchema);
 
 module.exports = MarkingSchema;

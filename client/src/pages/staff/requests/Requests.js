@@ -73,9 +73,11 @@ const PendingTopics = () => {
     fetchRequests("coSupervisor");
   }, []);
 
+  console.log(supervisorRequests);
+
   return (
-    <>
-      <Grid container spacing={2} sx={{ minHeight: "400px" }}>
+    <div style={{ minHeight: '400px' }}>
+      <Grid container spacing={2}>
         <Grid item xs={12}>
           <Typography variant="h6">All Requests</Typography>
         </Grid>
@@ -93,8 +95,8 @@ const PendingTopics = () => {
             <Grid key={index} item xs={4}>
               <RequestItem
                 id={request._id}
-                title={request.title}
-                group={request.groupName}
+                title={request.researchTopic.title}
+                group={request.researchTopic.group.name}
                 status={request.status}
                 onClick={onClickHandler}
               />
@@ -111,8 +113,8 @@ const PendingTopics = () => {
             <Grid key={request._id} item xs={4}>
               <RequestItem
                 id={request._id}
-                title={request.title}
-                group={request.groupName}
+                title={request.researchTopic.title}
+                group={request.researchTopic.group.name}
                 status={request.status}
                 onClick={onClickHandler}
               />
@@ -131,7 +133,7 @@ const PendingTopics = () => {
         onClose={onModalClose}
         onSubmit={onSubmitHandler}
       />
-    </>
+    </div>
   );
 };
 

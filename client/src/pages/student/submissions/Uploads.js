@@ -66,7 +66,7 @@ const Uploads = () => {
       const data = new FormData();
       data.append("file", file);
       data.append("group_id", profile.group._id);
-      data.append("type_id", id);
+      data.append("submission_type", id);
 
       try {
         onLoading(true);
@@ -97,8 +97,8 @@ const Uploads = () => {
   }, []);
 
   return (
-    <>
-      <Grid container spacing={2} sx={{ minHeight: "400px" }}>
+    <div style={{ minHeight: "400px" }}>
+      <Grid container spacing={2}>
         {loading && (
           <CircularProgress sx={{ marginLeft: "50%", marginTop: "10%" }} />
         )}
@@ -131,7 +131,7 @@ const Uploads = () => {
         onSubmit={onSubmitHandler}
         onClose={onModalClose}
       />
-    </>
+    </div>
   );
 };
 

@@ -1,15 +1,22 @@
 import http from "../config/httpHelper";
 
 const httpRequests = {
-  getProfile: (data) => http.get(`/students/profile/${data}`),
-  getStudents: () => http.get('/students'),
-  getSubmissionTypes: () => http.get('/students/submissions'),
-  getTemplates: () => http.get('/students/templates'),
-  postRequestStatus: () => http.post('/requests/status'),
-  postGroup: (data) => http.post('/students/groups', data),
-  postResearchTopic: (data) => http.post('/research-topics', data),
-  postRequest: (data) => http.post('/requests', data),
-  postSubmission: (data, config) => http.post('/students/submissions', data, config),
+  // users
+  getProfile: () => http.get(`/users/me`),
+  getStudents: () => http.get('/users/students'),
+  // submission types
+  getSubmissionTypes: () => http.get('/submissions'),
+  postSubmission: (data, config) => http.post('/users/students/groups/submissions', data, config),
+  // groups
+  postGroup: (data) => http.post('/users/students/groups', data),
+  // documents
+  getTemplates: () => http.get('/documents/templates'),
+  // research topics
+  postResearchTopic: (data) => http.post('/research-topics/groups', data),
+  // requests
+  postRequest: (data) => http.post('/requests/staff', data),
+  postRequestStatus: () => http.post('/requests/groups/status'),
+  patchResearchTopic: (data) => http.patch(`/research-topics/${data._id}`, data),
 };
 
 export default httpRequests;
