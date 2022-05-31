@@ -10,17 +10,29 @@ const USER_ROLES = {
   ADMIN: 'admin',
   STUDENT: 'student',
   STAFF: 'staff'
-}
+};
 
-module.exports = {
-  SUBMISSION_TYPES,
-  USER_ROLES,
-}
+const REQUEST_STATUS_TYPES = {
+  PENDING: 'pending',
+  ACCEPTED: 'accepted',
+  REJECTED: 'rejected'
+};
 
 const RESEARCH_TOPIC_STATUS = {
   PENDING: 'pending',
   ACCEPTED: 'accepted',
   REJECTED: 'rejected'
-}
+};
 
+const RESEARCH_ROLES = {
+  SUPERVISOR: 'supervisor',
+  CO_SUPERVISOR: 'coSupervisor'
+};
 
+module.exports = {
+  SUBMISSION_TYPES,
+  USER_ROLES,
+  REQUEST_STATUS_TYPES,
+  RESEARCH_TOPIC_STATUS,
+  RESEARCH_ROLES
+};

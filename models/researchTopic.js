@@ -9,12 +9,20 @@ const researchTopicSchema = new Schema(
             unique: true,
             required: true,
         },
+        introduction: {
+            type: String,
+            required: true
+        },
         group: {
             type: Schema.Types.ObjectId,
-            ref: 'Group'
+            ref: 'Group',
+            required: true
         },
-        isAccepted: {
+        isAcceptedByPanel: {
             type: Boolean
+        },
+        panelFeedback: {
+            type: String
         }
     }
 );

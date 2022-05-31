@@ -27,7 +27,8 @@ import {
   Dashboard as DashboardIcon,
   Forum as ForumIcon,
   CloudDownload as CloudDownloadIcon,
-  Topic as TopicIcon
+  Topic as TopicIcon,
+  Title as TitleIcon
 } from "@mui/icons-material";
 
 import httpRequests from "../../services/public-services";
@@ -153,6 +154,16 @@ const staffNavLinks = [
     icon: <TopicIcon sx={{ color: "black" }} />,
     path: "/",
   },
+  {
+    label: "Documents",
+    icon: <ArticleIcon sx={{ color: "black" }} />,
+    path: "/documents",
+  },
+  {
+    label: "Topics",
+    icon: <TitleIcon sx={{ color: "black" }} />,
+    path: "/topics",
+  },
 ];
 
 // ListItem
@@ -201,9 +212,7 @@ const Layout = (props) => {
       console.log(error);
     }
   };
-  console.log(location);
   if (location.pathname.includes("/group-chat/")) {
-    console.log('hello');
     return <>{props.children}</>;
   }
 

@@ -59,33 +59,35 @@ const Templates = () => {
   }, []);
 
   return (
-    <Grid container spacing={2} sx={{ minHeight: "400px" }}>
-      {loading && (
-        <CircularProgress sx={{ marginLeft: "50%", marginTop: "10%" }} />
-      )}
-      {!loading && templates.map((template, index) => (
-        <>
-          <Grid key={index} item xs={12}>
-            <Typography variant="subtitle1">{template.type}</Typography>
-          </Grid>
-          {template.files.map((file) => (
-            <>
-              <Grid key={file} xs={1} />
-              <Grid key={file} item xs={11}>
-                <span onClick={onClickHandler.bind(null, file)}>
-                  <Typography
-                    variant="subtitle2"
-                    sx={{ color: "blue", cursor: "pointer" }}
-                  >
-                    {file}
-                  </Typography>
-                </span>
-              </Grid>
-            </>
-          ))}
-        </>
-      ))}
-    </Grid>
+    <div style={{ minHeight: "400px" }}>
+      <Grid container spacing={2}>
+        {loading && (
+          <CircularProgress sx={{ marginLeft: "50%", marginTop: "10%" }} />
+        )}
+        {!loading && templates.map((template, index) => (
+          <>
+            <Grid key={index} item xs={12}>
+              <Typography variant="subtitle1">{template.type}</Typography>
+            </Grid>
+            {template.files.map((file) => (
+              <>
+                <Grid key={file} xs={1} />
+                <Grid key={file} item xs={11}>
+                  <span onClick={onClickHandler.bind(null, file)}>
+                    <Typography
+                      variant="subtitle2"
+                      sx={{ color: "blue", cursor: "pointer" }}
+                    >
+                      {file}
+                    </Typography>
+                  </span>
+                </Grid>
+              </>
+            ))}
+          </>
+        ))}
+      </Grid>
+    </div>
   );
 };
 

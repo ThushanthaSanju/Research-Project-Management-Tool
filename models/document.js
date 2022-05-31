@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const { Schema, model } = mongoose;
 
-const { USER_ROLES } = require("../enum");
+const { USER_ROLES: { ADMIN, STAFF, STUDENT } } = require("../enum");
 
 const documentSchema = new Schema(
   {
@@ -17,11 +17,21 @@ const documentSchema = new Schema(
     },
     created_by: {
       type: String,
-      enum: [USER_ROLES.ADMIN, USER_ROLES.STAFF, USER_ROLES.STUDENT],
+      enum: [ADMIN, STAFF, STUDENT],
       required: true
     },
   }
 );
+
+documentSchema.methods.toJSON = function () {
+  const documentObject = this.toObject();
+
+  delete documentObject.createdAt;
+  delete documentObject.updatedAt;
+  delete documentObject.__v;
+
+  return documentObject;
+};
 
 const Document = model("Document", documentSchema);
 

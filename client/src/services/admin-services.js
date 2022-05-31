@@ -1,21 +1,25 @@
 import http from "../config/httpHelper";
 
 const httpRequests = {
-  getUsers: (data) => http.get(`/admin/users?role=${data}`),
-  getSubmissionTypes: () => http.get("/admin/submissions"),
-  getMarkingSchemas: () => http.get("/admin/marking-schemas"),
-  getGroups: () => http.get("/admin/groups"),
-  getPanels: () => http.get("/admin/panels"),
-  getDocuments: () => http.get("/admin/documents"),
-  postSubmissionTypes: (data) => http.post("/admin/submissions", data),
-  postMarkingSchemas: (data, config) =>
-    http.post("/admin/marking-schemas", data, config),
-  postPanel: (data) => http.post("/admin/panels", data),
-  postDocument: (data, config) => http.post("/admin/documents", data, config),
-  patchUser: (data) => http.patch("/admin/users", data),
-  patchPanel: (id, data) =>
-    http.patch(`/admin/groups/${id}/allocate-panel`, data),
-  deleteUser: (data) => http.delete(`/admin/users/${data}`),
+  // users
+  getUsers: (data) => http.get(`/users?role=${data}`),
+  patchUser: (id, data) => http.patch(`/users/${id}`, data),
+  deleteUser: (id) => http.delete(`/users/${id}`),
+  // panel
+  getPanels: () => http.get("/users/staff/panels"),
+  patchPanel: (id, data) => http.patch(`/users/students/groups/${id}/allocate-panel`, data),
+  postPanel: (data) => http.post("/users/staff/panels", data),
+  // submission types
+  getSubmissionTypes: () => http.get("/submissions"),
+  postSubmissionTypes: (data) => http.post("/submissions", data),
+  // groups
+  getGroups: () => http.get("/users/students/groups"),
+  // marking schemas
+  getMarkingSchemas: () => http.get("/marking-schemas"),
+  postMarkingSchemas: (data, config) => http.post("/marking-schemas", data, config),
+  // document
+  getDocuments: () => http.get("/documents"),
+  postDocument: (data, config) => http.post("/documents", data, config),
 };
 
 export default httpRequests;
