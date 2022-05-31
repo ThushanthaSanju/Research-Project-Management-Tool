@@ -43,6 +43,7 @@ const Uploads = () => {
   const [helperTexts, setHelperTexts] = useState(initText);
   const [rows, setRows] = useState([]);
   const [options, setOptions] = useState([]);
+  const [serverError, setServerError] = useState("");
 
   const onModalCloseHandler = () => {
     setValues(initValues);
@@ -137,7 +138,7 @@ const Uploads = () => {
         fetchDocuments();
       } catch (error) {
         onLoading(false);
-        console.log(error);
+        setServerError(error.response.data.message)
       }
     }
   };
@@ -184,6 +185,7 @@ const Uploads = () => {
             errors={errors}
             helperTexts={helperTexts}
             options={options}
+            serverError={serverError}
             onChange={onChangeHandler}
           />
         }

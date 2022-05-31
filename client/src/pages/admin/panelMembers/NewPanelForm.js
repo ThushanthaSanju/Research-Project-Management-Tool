@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Grid } from "@mui/material";
+import { Grid, Typography } from "@mui/material";
 
 // components
 import DropDown from "../../../components/dropdown/DropDown";
@@ -8,7 +8,7 @@ import TextField from "../../../components/textField/TextField";
 // services
 import service from "../../../services/admin-services";
 
-const NewPanelForm = ({ values, onChange }) => {
+const NewPanelForm = ({ values, serverError, onChange }) => {
   const [memberOptions, setMemberOptions] = useState([]);
 
   const fetchPanels = async () => {
@@ -31,6 +31,13 @@ const NewPanelForm = ({ values, onChange }) => {
 
   return (
     <Grid container spacing={2}>
+      {serverError && (
+        <Grid item xs={12}>
+          <Typography color="red" variant="body1">
+            {serverError}
+          </Typography>
+        </Grid>
+      )}
       <Grid item xs={12}>
         <TextField fullWidth name="name" label="Panel name" value={values.name} onChange={onChange} />
       </Grid>

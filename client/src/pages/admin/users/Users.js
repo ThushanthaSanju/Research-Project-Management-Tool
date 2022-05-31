@@ -77,8 +77,15 @@ const formDetails = [
 ];
 
 const Users = () => {
-  const { open, loading, notify, onModalOpen, onModalClose, onLoading, onNotifyOpen } =
-    useContext(GlobalContext);
+  const {
+    open,
+    loading,
+    notify,
+    onModalOpen,
+    onModalClose,
+    onLoading,
+    onNotifyOpen,
+  } = useContext(GlobalContext);
 
   const [role, setRole] = useState("");
   const [data, setData] = useState({
@@ -88,6 +95,7 @@ const Users = () => {
     role: "",
   });
   const [rows, setRows] = useState([]);
+  const [serverError, setServerError] = useState("");
 
   const dropDownChangeHandler = (event) => {
     setRole(event.target.value);
@@ -112,15 +120,22 @@ const Users = () => {
   };
 
   const submitHandler = async (event) => {
-    console.log('object');
+    console.log("object");
     event.preventDefault();
-    onLoading(true);
 
-    const response = await service.patchUser(data);
+    try {
+      onLoading(true);
 
-    if (response.status === 200) {
-      onModalClose();
-      fetchUsers();
+      const response = await service.patchUser(data);
+
+      if (response.status === 200) {
+        onModalClose();
+        fetchUsers();
+      }
+      onLoading(false);
+    } catch (error) {
+      onLoading(false);
+      setServerError(error.response.data.message);
     }
   };
 
@@ -151,7 +166,7 @@ const Users = () => {
 
   useEffect(() => {
     fetchUsers();
-  }, []);
+  }, [role]);
 
   const columns = [
     ...gridColumns,
@@ -176,6 +191,13 @@ const Users = () => {
 
   const content = (
     <Grid container spacing={2}>
+      {serverError && (
+        <Grid item xs={12}>
+          <Typography color="red" variant="body1">
+            {serverError}
+          </Typography>
+        </Grid>
+      )}
       {formDetails.map((item) => {
         if (item.type === "dropdown") {
           return (
@@ -208,7 +230,7 @@ const Users = () => {
   );
 
   return (
-    <div style={{ minHeight: '400px' }}>
+    <div style={{ minHeight: "400px" }}>
       <Grid container spacing={2}>
         <Grid container item xs={2}>
           <Grid item xs={6}>

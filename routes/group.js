@@ -99,7 +99,7 @@ router.get('/api/users/students/groups/:id', auth, async (req, res) => {
 router.get('/api/staff/groups', auth, async (req, res) => {
     const { _id } = req.user;
     try {
-        const groups = await Group.find({ supervisor: _id });
+        const groups = await Group.find({ $or: [{ supervisor: _id }, { coSupervisor: _id }] });
 
         response(res, true, 'Success', 200, "Groups fetched", { groups });
     } catch (e) {
