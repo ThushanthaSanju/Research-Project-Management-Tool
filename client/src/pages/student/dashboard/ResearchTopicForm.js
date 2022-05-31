@@ -1,11 +1,22 @@
-import { Grid } from "@mui/material";
+import { Grid, Typography } from "@mui/material";
 
 // components
 import TextField from "../../../components/textField/TextField";
 
-const ResearchTopicForm = ({ values, errors, helperTexts, onChange }) => {
+const ResearchTopicForm = ({
+  values,
+  errors,
+  serverError,
+  helperTexts,
+  onChange,
+}) => {
   return (
     <Grid container spacing={2}>
+      {serverError && (
+        <Typography color="red" variant="body1">
+          {serverError}
+        </Typography>
+      )}
       <Grid item xs={12}>
         <TextField
           label="Title"

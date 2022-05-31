@@ -45,14 +45,14 @@ const gridColumns = [
       <Typography>{params.row.students[2].email}</Typography>
     ),
   },
-  {
-    field: "student_4",
-    headerName: "Student 4",
-    flex: 1,
-    renderCell: (params) => (
-      <Typography>{params.row.students[3].email}</Typography>
-    ),
-  },
+  // {
+  //   field: "student_4",
+  //   headerName: "Student 4",
+  //   flex: 1,
+  //   renderCell: (params) => (
+  //     <Typography>{params.row?.students[3].email}</Typography>
+  //   ),
+  // },
   {
     field: "status",
     headerName: "Status",
@@ -80,6 +80,8 @@ const PanelMembers = () => {
     member3: "",
     member4: "",
   });
+  const [panelServerError, setPanelServerError] = useState('');
+  const [allocateServerError, setAllocateServerError] = useState('');
 
   const fetchGroups = async () => {
     onLoading(true);
@@ -136,27 +138,37 @@ const PanelMembers = () => {
 
     // if type is assign then assign new panel
     if (type === "assign") {
-      onLoading(true);
-      await service.patchPanel(groupId, { panel: panel });
-      onLoading(false);
-      onModalClose();
-      fetchGroups();
+      try {
+        onLoading(true);
+        await service.patchPanel(groupId, { panel: panel });
+        onLoading(false);
+        onModalClose();
+        fetchGroups();
+      } catch (error) {
+        onLoading(false);
+        setAllocateServerError(error.response.data.message);
+      }
       return;
     }
 
     if (type === "panel") {
-      onLoading(true);
-      await service.postPanel({
-        name: values.name,
-        members: [
-          values.member1,
-          values.member2,
-          values.member3,
-          values.member4,
-        ],
-      });
-      onLoading(false);
-      onModalClose();
+      try {
+        onLoading(true);
+        await service.postPanel({
+          name: values.name,
+          members: [
+            values.member1,
+            values.member2,
+            values.member3,
+            values.member4,
+          ],
+        });
+        onLoading(false);
+        onModalClose();
+      } catch (error) {
+        onLoading(false);
+        setPanelServerError(error.response.data.message);
+      }
     }
   };
 
@@ -215,9 +227,9 @@ const PanelMembers = () => {
         title={type === "panel" ? "New panel" : "Assign a panel"}
         content={
           type === "panel" ? (
-            <NewPanelForm values={values} onChange={onChangeHandler} />
+            <NewPanelForm values={values} serverError={panelServerError} onChange={onChangeHandler} />
           ) : (
-            <AssignPanelForm value={panel} onChange={onChangeHandler} />
+            <AssignPanelForm value={panel} serverError={allocateServerError} onChange={onChangeHandler} />
           )
         }
         onClose={onModalClose}

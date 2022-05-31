@@ -35,6 +35,7 @@ const MarkingSchema = () => {
   const [values, setValues] = useState({ name: "", file: null });
   const [errors, setErrors] = useState({ name: false, file: false });
   const [helperTexts, setHelperTexts] = useState({ name: "", file: "" });
+  const [serverError, setServerError] = useState('');
 
   // handle input changes
   const onChangeHandler = (event) => {
@@ -97,11 +98,17 @@ const MarkingSchema = () => {
     data.append("file", values.file);
     data.append("name", values.name);
 
-    await service.postMarkingSchemas(data, config);
-    onLoading(false);
-    onModalClose();
-    fetchMarkingSchemas();
-    setValues({ name: '', file: null })
+    try {
+      await service.postMarkingSchemas(data, config);
+      onLoading(false);
+      onModalClose();
+      fetchMarkingSchemas();
+      setValues({ name: '', file: null })
+    } catch (error) {
+      onLoading(false);
+      setServerError(error.response.data.message);
+    }
+
   };
 
   const submitHandler = (event) => {

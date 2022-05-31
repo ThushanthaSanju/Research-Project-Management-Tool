@@ -1,13 +1,27 @@
 import React from "react";
-import { Grid } from "@mui/material";
+import { Grid, Typography } from "@mui/material";
 
 // components
 import TextField from "../../../components/textField/TextField";
 import DropDown from "../../../components/dropdown/DropDown";
 
-const UploadForm = ({ values, errors, options, helperTexts, onChange }) => {
+const UploadForm = ({
+  values,
+  errors,
+  serverError,
+  options,
+  helperTexts,
+  onChange,
+}) => {
   return (
     <Grid container spacing={2}>
+      {serverError && (
+        <Grid item xs={12}>
+          <Typography color="red" variant="body1">
+            {serverError}
+          </Typography>
+        </Grid>
+      )}
       <Grid item xs={12}>
         <DropDown
           name="submission_type"

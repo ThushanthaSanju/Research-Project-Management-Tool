@@ -15,6 +15,7 @@ import Templates from './pages/student/templates/Templates';
 import Requests from './pages/staff/requests/Requests';
 import Documents from './pages/staff/documents/Documents';
 import Topics from './pages/staff/topic/Topics';
+import Groups from './pages/staff/groups/Groups';
 
 export const publicRoutes = [
   {
@@ -101,5 +102,13 @@ export const staffRoutes = [
   {
     path: "/dashboard",
     element: <Navigate to="/" replace />,
+  },
+  {
+    path: "/group-chat",
+    element: <Groups />,
+  },
+  {
+    path: "/group-chat/:id",
+    element: <Chat />,
   },
 ]

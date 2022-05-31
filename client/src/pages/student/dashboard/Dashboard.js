@@ -1,9 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { CircularProgress, Grid, Typography } from "@mui/material";
-import {
-  Error as ErrorIcon,
-  Verified as VerifiedIcon,
-} from "@mui/icons-material";
+import { CircularProgress, Grid } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 
 //context
@@ -36,9 +32,7 @@ const Dashboard = () => {
   const [profile, setProfile] = useState();
   const [requests, setRequests] = useState([]);
   const [name, setName] = useState("");
-  const [students, setStudents] = useState([
-    JSON.parse(localStorage.getItem("user"))._id,
-  ]);
+  const [students, setStudents] = useState([]);
   const [errors, setErrors] = useState({
     name: { error: false, text: "" },
     student1: { error: false, text: "" },
@@ -66,6 +60,10 @@ const Dashboard = () => {
     error: false,
     text: "",
   });
+  const [groupServerError, setGroupServerError] = useState("");
+  const [supervisorServerError, setSupervisorServerError] = useState("");
+  const [topicServerError, setTopicServerError] = useState("");
+  const [coSupervisorServerError, setCoSupervisorServerError] = useState("");
 
   const onButtonClick = (formType) => {
     setType(formType);
@@ -75,14 +73,14 @@ const Dashboard = () => {
   const onChangeHandler = (event) => {
     const { name, value } = event.target;
 
-    if (name === 'title') {
+    if (name === "title") {
       setTopicTitle(value);
     }
 
-    if (name === 'introduction') {
+    if (name === "introduction") {
       setTopicIntroduction(value);
     }
-  }
+  };
 
   // validate supervisor form inpus
   const supervisorValidate = () => {
@@ -112,7 +110,10 @@ const Dashboard = () => {
     }
 
     if (topicIntroduction.trim() === "") {
-      setTopicIntroduction({ error: true, text: "Introduction is required" });
+      setTopicIntroductionError({
+        error: true,
+        text: "Introduction is required",
+      });
       return false;
     }
 
@@ -121,7 +122,6 @@ const Dashboard = () => {
 
   // validate group form inputs
   const groupValidate = () => {
-    console.log(students[1]);
     if (name.trim() === "") {
       setErrors((prev) => {
         return {
@@ -133,7 +133,7 @@ const Dashboard = () => {
       return false;
     }
 
-    if (students[1] === undefined) {
+    if (students[0] === undefined) {
       setErrors((prev) => {
         return {
           ...prev,
@@ -144,7 +144,7 @@ const Dashboard = () => {
       return false;
     }
 
-    if (students[2] === undefined) {
+    if (students[1] === undefined) {
       setErrors((prev) => {
         return {
           ...prev,
@@ -155,7 +155,7 @@ const Dashboard = () => {
       return false;
     }
 
-    if (students[3] === undefined) {
+    if (students[2] === undefined) {
       setErrors((prev) => {
         return {
           ...prev,
@@ -178,21 +178,35 @@ const Dashboard = () => {
         setName(value);
         break;
       case "student1": {
-        let temp = [...students];
-        temp[1] = value;
-        setStudents(temp);
+        if (students[0]) {
+          let temp = [...students];
+          temp[0] = value;
+          setStudents(temp);
+        } else {
+          setStudents([...students, value]);
+        }
         break;
       }
+
       case "student2": {
-        let temp = [...students];
-        temp[2] = value;
-        setStudents(temp);
+        if (students[1]) {
+          let temp = [...students];
+          temp[1] = value;
+          setStudents(temp);
+        } else {
+          setStudents([...students, value]);
+        }
         break;
       }
+
       case "student3": {
-        let temp = [...students];
-        temp[3] = value;
-        setStudents(temp);
+        if (students[2]) {
+          let temp = [...students];
+          temp[2] = value;
+          setStudents(temp);
+        } else {
+          setStudents([...students, value]);
+        }
         break;
       }
 
@@ -213,12 +227,16 @@ const Dashboard = () => {
     });
 
     if (groupValidate()) {
-      onLoading(true);
-      await service.postGroup({ name, students });
-      onLoading(false);
-      onModalClose();
-      fetchProfile();
-      return;
+      try {
+        onLoading(true);
+        await service.postGroup({ name, students });
+        onLoading(false);
+        onModalClose();
+        fetchProfile();
+      } catch (error) {
+        onLoading(false);
+        setGroupServerError(error.response.data.message);
+      }
     }
   };
 
@@ -251,7 +269,7 @@ const Dashboard = () => {
       } catch (error) {
         onLoading(false);
         onModalClose();
-        console.log(error);
+        setTopicServerError(error.response.data.message);
       }
     }
   };
@@ -274,7 +292,7 @@ const Dashboard = () => {
       } catch (error) {
         onLoading(false);
         onModalClose();
-        console.log(error);
+        setSupervisorServerError(error.response.data.message);
       }
     }
   };
@@ -297,7 +315,7 @@ const Dashboard = () => {
       } catch (error) {
         onLoading(false);
         onModalClose();
-        console.log(error);
+        setCoSupervisorServerError(error.response.data.message);
       }
     }
   };
@@ -309,7 +327,9 @@ const Dashboard = () => {
 
     if (response.status === 200) {
       setProfile(response.data.body.user);
-      fetchRequestStatus(response.data.body.user.group._id);
+      if (response.data.body.user.group) {
+        fetchRequestStatus(response.data.body.user.group._id);
+      }
     }
     onLoading(false);
   };
@@ -321,17 +341,19 @@ const Dashboard = () => {
       if (response.status === 200) {
         setRequests(response.data.body.requests);
       }
+      onLoading(false);
     } catch (error) {
+      onLoading(false);
       console.log(error);
     }
   };
 
-  const supervisorStatus = requests.filter(
-    (request) => request.researchRole === "supervisor"
-  );
-  const coSupervisorStatus = requests.filter(
-    (request) => request.researchRole === "coSupervisor"
-  );
+  const supervisorStatus =
+    requests.length > 0 &&
+    requests.filter((request) => request.researchRole === "supervisor");
+  const coSupervisorStatus =
+    requests.length > 0 &&
+    requests.filter((request) => request.researchRole === "coSupervisor");
 
   useEffect(() => {
     fetchProfile();
@@ -382,6 +404,7 @@ const Dashboard = () => {
               name={name}
               students={students}
               errors={errors}
+              serverError={groupServerError}
               onChangeHandler={groupOnChangeHandler}
             />
           ) : type === "topic" ? (
@@ -395,6 +418,7 @@ const Dashboard = () => {
                 title: topicTitleError.text,
                 introduction: topicIntroductionError.text,
               }}
+              serverError={topicServerError}
               onChange={onChangeHandler}
             />
           ) : (
@@ -410,6 +434,11 @@ const Dashboard = () => {
                 type === "supervisor"
                   ? supervisorError.text
                   : coSupervisorError.text
+              }
+              serverError={
+                type === "supervisor"
+                  ? supervisorServerError
+                  : coSupervisorServerError
               }
               onChange={(event) => {
                 if (event.target.name === "supervisor") {
