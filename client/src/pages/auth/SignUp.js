@@ -55,7 +55,6 @@ const SignUp = () => {
         const { data: { body: { user, token } } } = await httpRequests.register(credentials);
         localStorage.setItem('user', JSON.stringify(user));
         localStorage.setItem('token', token);
-        window.location.reload();
         setCredentials({
           firstName: "",
           lastName: "",
@@ -63,7 +62,8 @@ const SignUp = () => {
           email: "",
           password: ""
         });
-        <Navigate to={'/'} />;
+        navigate('/')
+        window.location.reload();
       } catch (error) {
         setErrorMsg(error.response.data.message);
         onNotifyOpen();
