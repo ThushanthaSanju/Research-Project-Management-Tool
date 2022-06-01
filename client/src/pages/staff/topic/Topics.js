@@ -27,7 +27,7 @@ const Topics = () => {
   const [feedBackHelperText, setFeedBackHelperText] = useState("");
 
   const onClickHandler = (id) => {
-      console.log(id);
+    console.log(id);
     setId(id);
     onModalOpen();
   };
@@ -46,12 +46,6 @@ const Topics = () => {
 
   // validate inputs
   const validate = () => {
-    if (!isAcceptedByPanel) {
-      setIsAcceptedByPanelError(true);
-      setIsAcceptedByPaneHelperText("Status is required");
-      return false;
-    }
-
     if (feedBack.trim() === "") {
       setFeedBackError(true);
       setFeedBackHelperText("Feed back is required");
@@ -72,6 +66,7 @@ const Topics = () => {
           panelFeedback: feedBack,
         });
         fetchGroups();
+        onModalClose();
       } catch (error) {
         onLoading(false);
         console.log(error);
@@ -104,14 +99,23 @@ const Topics = () => {
       {loading && <CircularProgress sx={{ marginLeft: "50%" }} />}
       {!loading && (
         <Grid container p={2} spacing={2}>
-          {groups.map((item, index) => (
-            <TopicIte
-              title={item.name}
-              topic={item.researchTopic?.title}
-              researchTopic={item.researchTopic}
-              onClick={onClickHandler.bind(null, item.researchTopic?._id)}
-            />
-          ))}
+          {groups.map((item, index) => {
+            if (
+              item.researchTopic.isAcceptedByPanel ||
+              item.researchTopic.isAcceptedByPanel === undefined
+            ) {
+              return (
+                <TopicIte
+                  key={index}
+                  title={item.name}
+                  topic={item.researchTopic?.title}
+                  researchTopic={item.researchTopic}
+                  onClick={onClickHandler.bind(null, item.researchTopic?._id)}
+                />
+              );
+            }
+            return;
+          })}
         </Grid>
       )}
       <Modal
