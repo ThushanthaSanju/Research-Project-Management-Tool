@@ -35,6 +35,7 @@ const Submissions = () => {
   const [values, setValues] = useState({ name: "", type: "" });
   const [errors, setErrors] = useState({ name: false, type: false });
   const [helperTexts, setHelperTexts] = useState({ name: "", type: "" });
+  const [serverError, setServerError] = useState("");
 
   // validate input values
   const validate = () => {
@@ -77,11 +78,16 @@ const Submissions = () => {
 
   // add new submission
   const addSubmission = async () => {
-    onLoading(true);
-    await service.postSubmissionTypes(values);
-    fetchSubmissions();
-    onLoading(false);
-    onModalClose();
+    try {
+      onLoading(true);
+      await service.postSubmissionTypes(values);
+      fetchSubmissions();
+      onLoading(false);
+      onModalClose();
+    } catch (error) {
+      onLoading(false);
+      setServerError(error.response.data.message)
+    }
   };
 
   const onChangeHandler = (event) => {
@@ -104,7 +110,7 @@ const Submissions = () => {
   }, []);
 
   return (
-    <>
+    <div style={{ minHeight: '400px' }}>
       <Grid container spacing={2}>
         <Grid item xs={6} />
         <Grid item xs={6}>
@@ -139,13 +145,14 @@ const Submissions = () => {
             values={values}
             errors={errors}
             helperTexts={helperTexts}
+            serverError={serverError}
             onChange={onChangeHandler}
           />
         }
         onClose={onModalClose}
         onSubmit={submitHandler}
       />
-    </>
+    </div>
   );
 };
 

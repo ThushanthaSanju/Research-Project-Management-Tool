@@ -1,4 +1,4 @@
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
 
 const DBConnect = async () => {
     try {
@@ -7,7 +7,7 @@ const DBConnect = async () => {
             useUnifiedTopology: true
         });
 
-        console.log('database connected');
+        // console.log('database connected');
 
     } catch (error) {
         console.log("could not connect");

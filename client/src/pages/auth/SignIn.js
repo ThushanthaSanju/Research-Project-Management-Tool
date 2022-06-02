@@ -1,16 +1,22 @@
 import { Grid, Typography } from "@mui/material";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Button from "../../components/button/Button";
+import Notify from "../../components/notify/Notify";
 import TextField from "../../components/textField/TextField";
 import httpRequests from '../../services/public-services';
+
+// context
+import GlobalContext from '../../context/global-context';
 
 // components
 import Auth from "./Auth";
 
 const SignIn = () => {
+  const { onNotifyOpen } = useContext(GlobalContext);
   const navigate = useNavigate();
   const [errors, setErrors] = useState({});
+  const [errorMsg, setErrorMsg] = useState('');
 
   const [credentials, setCredentials] = useState({
     email: "",
@@ -48,16 +54,18 @@ const SignIn = () => {
         });
         navigate('/');
       } catch (error) {
-        console.log(error);
+        onNotifyOpen();
+        setErrorMsg(error.response.data.message)
       }
     }
   };
 
   return (
     <Auth>
+      <Notify title="Failed" message={errorMsg} />
       <Typography align="center" mt="136px" fontSize={"26px"} fontWeight="400">Sign In</Typography>
       <Grid container direction="column" alignItems="center" justifyContent="center" >
-        <div>
+        <div style={{ marginTop: '106px' }}>
           <TextField
             name={"email"}
             value={credentials.email}
@@ -67,7 +75,7 @@ const SignIn = () => {
             error={errors.email}
             helperText={errors.email && "email is required!"}
             margin="normal"
-            style={{ width: '379px', marginTop: '106px' }}
+            style={{ width: '379px' }}
           />
         </div>
         <div>
@@ -84,12 +92,13 @@ const SignIn = () => {
             style={{ width: '379px', marginTop: '29px' }}
           />
         </div>
-
         <Button label={"Sign In"} onClick={onSubmit} style={{ width: '221px', marginTop: '52px' }} />
       </Grid>
       <Grid container direction="row" alignItems="center" justifyContent="center" >
         <Typography align="center" mt="90px" mr="20px" fontSize={"16px"} fontWeight="400" style={{ color: '#706F6F' }}>Need an account?</Typography>
-        <Typography align="center" mt="90px" fontSize={"16px"} fontWeight="400" style={{ color: '#706F6F' }}>Sign Up</Typography>
+        <span style={{ cursor: 'pointer' }} onClick={() => navigate('/sign-up')}>
+          <Typography align="center" mt="90px" fontSize={"16px"} fontWeight="400" style={{ color: '#706F6F' }}>Sign Up</Typography>
+        </span>
       </Grid>
     </Auth>
   );

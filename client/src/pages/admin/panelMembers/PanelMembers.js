@@ -9,6 +9,7 @@ import GlobalContext from "../../../context/global-context";
 // components
 import Button from "../../../components/button/Button";
 import Modal from "../../../components/modal/Modal";
+import Notify from "../../../components/notify/Notify";
 
 // services
 import service from "../../../services/admin-services";
@@ -45,14 +46,14 @@ const gridColumns = [
       <Typography>{params.row.students[2].email}</Typography>
     ),
   },
-  {
-    field: "student_4",
-    headerName: "Student 4",
-    flex: 1,
-    renderCell: (params) => (
-      <Typography>{params.row.students[3].email}</Typography>
-    ),
-  },
+  // {
+  //   field: "student_4",
+  //   headerName: "Student 4",
+  //   flex: 1,
+  //   renderCell: (params) => (
+  //     <Typography>{params.row?.students[3].email}</Typography>
+  //   ),
+  // },
   {
     field: "status",
     headerName: "Status",
@@ -66,7 +67,7 @@ const gridColumns = [
 ];
 
 const PanelMembers = () => {
-  const { open, loading, onLoading, onModalOpen, onModalClose } =
+  const { open, loading, onLoading, onModalOpen, onModalClose, onNotifyOpen } =
     useContext(GlobalContext);
 
   const [rows, setRows] = useState([]);
@@ -80,6 +81,9 @@ const PanelMembers = () => {
     member3: "",
     member4: "",
   });
+  const [panelServerError, setPanelServerError] = useState("");
+  const [allocateServerError, setAllocateServerError] = useState("");
+  const [message, setMessage] = useState("");
 
   const fetchGroups = async () => {
     onLoading(true);
@@ -136,27 +140,41 @@ const PanelMembers = () => {
 
     // if type is assign then assign new panel
     if (type === "assign") {
-      onLoading(true);
-      await service.patchPanel(groupId, { panel: panel });
-      onLoading(false);
-      onModalClose();
-      fetchGroups();
+      try {
+        onLoading(true);
+        await service.patchPanel(groupId, { panel: panel });
+        onLoading(false);
+        onModalClose();
+        fetchGroups();
+      } catch (error) {
+        onLoading(false);
+        setAllocateServerError(error.response.data.message);
+      }
       return;
     }
 
     if (type === "panel") {
-      onLoading(true);
-      await service.postPanel({
-        name: values.name,
-        members: [
-          values.member1,
-          values.member2,
-          values.member3,
-          values.member4,
-        ],
-      });
-      onLoading(false);
-      onModalClose();
+      try {
+        onLoading(true);
+        const response = await service.postPanel({
+          name: values.name,
+          members: [
+            values.member1,
+            values.member2,
+            values.member3,
+            values.member4,
+          ],
+        });
+        if (response.status === 200) {
+          onNotifyOpen(true);
+          setMessage(response.data.message);
+        }
+        onLoading(false);
+        onModalClose();
+      } catch (error) {
+        onLoading(false);
+        setPanelServerError(error.response.data.message);
+      }
     }
   };
 
@@ -184,45 +202,56 @@ const PanelMembers = () => {
 
   return (
     <>
-      <Grid container spacing={2}>
-        <Grid item xs={6} />
-        <Grid item xs={6}>
-          <Button
-            label="New Panel"
-            sx={{ float: "right", textTransform: "none" }}
-            onClick={newClickHandler}
-          />
+      <Notify message={message} />
+      <div style={{ minHeight: "400px" }}>
+        <Grid container spacing={2}>
+          <Grid item xs={6} />
+          <Grid item xs={6}>
+            <Button
+              label="New Panel"
+              sx={{ float: "right", textTransform: "none" }}
+              onClick={newClickHandler}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <div style={{ height: 400, width: "100%" }}>
+              {loading && <CircularProgress sx={{ marginLeft: "50%" }} />}
+              {!loading && (
+                <DataGrid
+                  columns={columns}
+                  rows={rows}
+                  getRowId={(row) => row._id}
+                  disableSelectionOnClick
+                  hideFooter
+                  disableColumnMenu
+                />
+              )}
+            </div>
+          </Grid>
         </Grid>
-        <Grid item xs={12}>
-          <div style={{ height: 400, width: "100%" }}>
-            {loading && <CircularProgress sx={{ marginLeft: "50%" }} />}
-            {!loading && (
-              <DataGrid
-                columns={columns}
-                rows={rows}
-                getRowId={(row) => row._id}
-                disableSelectionOnClick
-                hideFooter
-                disableColumnMenu
-              />
-            )}
-          </div>
-        </Grid>
-      </Grid>
 
-      <Modal
-        open={open}
-        title={type === "panel" ? "New panel" : "Assign a panel"}
-        content={
-          type === "panel" ? (
-            <NewPanelForm values={values} onChange={onChangeHandler} />
-          ) : (
-            <AssignPanelForm value={panel} onChange={onChangeHandler} />
-          )
-        }
-        onClose={onModalClose}
-        onSubmit={onSubmitHandler}
-      />
+        <Modal
+          open={open}
+          title={type === "panel" ? "New panel" : "Assign a panel"}
+          content={
+            type === "panel" ? (
+              <NewPanelForm
+                values={values}
+                serverError={panelServerError}
+                onChange={onChangeHandler}
+              />
+            ) : (
+              <AssignPanelForm
+                value={panel}
+                serverError={allocateServerError}
+                onChange={onChangeHandler}
+              />
+            )
+          }
+          onClose={onModalClose}
+          onSubmit={onSubmitHandler}
+        />
+      </div>
     </>
   );
 };

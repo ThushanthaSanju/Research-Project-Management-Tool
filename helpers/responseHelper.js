@@ -26,7 +26,6 @@ const ResponseHelper = {
   error: (res, error) => {
     const status = error.status || 500;
     const code = error.code || "ERROR";
-    console.log(status);
     res.status(status).json({
       success: false,
       status,

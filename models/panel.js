@@ -24,6 +24,16 @@ function arrayLimit(val) {
     return val.length <= 4;
 }
 
+panelSchema.methods.toJSON = function () {
+    const panelObject = this.toObject();
+
+    delete panelObject.createdAt;
+    delete panelObject.updatedAt;
+    delete panelObject.__v;
+
+    return panelObject;
+};
+
 const Panel = model("Panel", panelSchema);
 
 module.exports = Panel;

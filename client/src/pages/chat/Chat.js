@@ -8,6 +8,9 @@ import httpRequests from "../../services/public-services";
 //components
 import './chat.css';
 
+// assets
+import Online from '../../assets/online.png';
+
 const Chat = () => {
     const { id: groupId } = useParams();
 
@@ -109,7 +112,7 @@ const Chat = () => {
                     <h3 className='list-title'>Online Users</h3>
                     <ul className='users'>
                         {groupData.users.map((user) => {
-                            return <li key={user.id}>{user.email} <img src={require('../../assets/online.png')} alt="online" style={{ width: 8, marginBottom: 6 }} /></li>;
+                            return <li key={user.id}>{user.email} <img src={Online} alt="online" style={{ width: 8, marginBottom: 6 }} /></li>;
                         })}
                     </ul>
 

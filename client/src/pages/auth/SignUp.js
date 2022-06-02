@@ -1,18 +1,24 @@
 import { Grid, Typography } from "@mui/material";
 import { Navigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { useNavigate } from 'react-router-dom';
 import Button from "../../components/button/Button";
 import DropDown from "../../components/dropdown/DropDown";
 import TextField from "../../components/textField/TextField";
 import httpRequests from '../../services/public-services';
 
+// context
+import GlobalContext from '../../context/global-context';
+
 // components
 import Auth from "./Auth";
+import Notify from "../../components/notify/Notify";
 
 const SignUp = () => {
+  const { onNotifyOpen } = useContext(GlobalContext);
   const navigate = useNavigate();
   const [errors, setErrors] = useState({});
+  const [errorMsg, setErrorMsg] = useState('');
 
   const [credentials, setCredentials] = useState({
     firstName: '',
@@ -49,7 +55,6 @@ const SignUp = () => {
         const { data: { body: { user, token } } } = await httpRequests.register(credentials);
         localStorage.setItem('user', JSON.stringify(user));
         localStorage.setItem('token', token);
-        window.location.reload();
         setCredentials({
           firstName: "",
           lastName: "",
@@ -57,19 +62,21 @@ const SignUp = () => {
           email: "",
           password: ""
         });
-        <Navigate to={'/'} />;
+        navigate('/')
+        window.location.reload();
       } catch (error) {
-        console.log(error);
+        setErrorMsg(error.response.data.message);
+        onNotifyOpen();
       }
     }
   };
 
   return (
-    <Auth>
+    <Auth> 
+      <Notify title="Failed" message={errorMsg} />
       <Typography align="center" mt="136px" fontSize={"26px"} fontWeight="400">Sign Up</Typography>
-
       <Grid container direction="column" alignItems="center" justifyContent="center" >
-        <div>
+        <div style={{ marginTop: '106px' }}>
           <TextField
             name={"firstName"}
             label="First Name"
@@ -79,7 +86,7 @@ const SignUp = () => {
             size="small"
             onChange={handleChange}
             margin="normal"
-            style={{ width: '379px', marginTop: '106px' }}
+            style={{ width: '379px' }}
           />
         </div>
 
@@ -140,7 +147,9 @@ const SignUp = () => {
       </Grid>
       <Grid container direction="row" alignItems="center" justifyContent="center" >
         <Typography align="center" mt="90px" mr="20px" fontSize={"16px"} fontWeight="400" style={{ color: '#706F6F' }}>Already an user?</Typography>
-        <Typography align="center" mt="90px" fontSize={"16px"} fontWeight="400" style={{ color: '#706F6F' }}>Sign In</Typography>
+        <span style={{ cursor: 'pointer' }} onClick={() => navigate('/sign-in')}>
+          <Typography align="center" mt="90px" fontSize={"16px"} fontWeight="400" style={{ color: '#706F6F' }}>Sign In</Typography>
+        </span>
       </Grid>
     </Auth>
   );

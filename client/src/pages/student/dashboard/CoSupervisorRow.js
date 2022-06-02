@@ -24,10 +24,10 @@ const CoSupervisorRow = ({
           {status && status === "pending" && (
             <PendingIcon fontSize="large" className={classes.icon} />
           )}
-          {(!status || status === 'rejected') && !profile?.group.coSupervisor && (
+          {(!status || status === 'rejected') && !profile?.group?.coSupervisor && (
             <ErrorIcon fontSize="large" className={classes.icon} />
           )}
-          {profile?.group.coSupervisor && (
+          {profile?.group?.coSupervisor && (
             <VerifiedIcon
               fontSize="large"
               className={classes.icon}
@@ -35,10 +35,10 @@ const CoSupervisorRow = ({
             />
           )}
         </Grid>
-        <Grid item xs={4} mt={1} ml={2}>
+        <Grid item xs={6} mt={1} ml={2}>
           <Typography variant="subtitle2">
-            {profile?.group.coSupervisor
-              ? profile.group.coSupervisor.email
+            {profile?.group?.coSupervisor
+              ? profile?.group?.coSupervisor.email
               : "No supervisor"}
           </Typography>
         </Grid>
@@ -46,7 +46,7 @@ const CoSupervisorRow = ({
           <Button
             label="Request"
             onClick={onButtonClick.bind(null, "co-supervisor")}
-            disabled={!!profile?.group.coSupervisor || !!(status && status === 'pending')}
+            disabled={!!profile?.group?.coSupervisor || !!(status && status === 'pending')}
           />
         </Grid>
       </Grid>

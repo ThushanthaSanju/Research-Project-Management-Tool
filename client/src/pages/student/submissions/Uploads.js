@@ -7,13 +7,14 @@ import GlobalContext from "../../../context/global-context";
 // components
 import Button from "../../../components/button/Button";
 import Modal from "../../../components/modal/Modal";
+import Notify from "../../../components/notify/Notify";
 import UploadForm from "./UploadForm";
 
 // services
 import service from "../../../services/student-service";
 
 const Uploads = () => {
-  const { open, loading, onModalOpen, onModalClose, onLoading } =
+  const { open, loading, onModalOpen, onModalClose, onLoading, onNotifyOpen } =
     useContext(GlobalContext);
 
   const [profile, setProfile] = useState(null);
@@ -21,6 +22,7 @@ const Uploads = () => {
   const [file, setFile] = useState(null);
   const [id, setId] = useState(null);
   const [error, setError] = useState({ error: false, text: "" });
+  const [message, setMessage] = useState("");
 
   // fetch profile details
   const fetchProfile = async () => {
@@ -66,11 +68,15 @@ const Uploads = () => {
       const data = new FormData();
       data.append("file", file);
       data.append("group_id", profile.group._id);
-      data.append("type_id", id);
+      data.append("submission_type", id);
 
       try {
         onLoading(true);
-        await service.postSubmission(data, config);
+        const response = await service.postSubmission(data, config);
+        if (response.status === 201) {
+          onNotifyOpen();
+          setMessage(response.data.message);
+        }
         onLoading(false);
         onModalClose();
       } catch (error) {
@@ -98,39 +104,42 @@ const Uploads = () => {
 
   return (
     <>
-      <Grid container spacing={2} sx={{ minHeight: "400px" }}>
-        {loading && (
-          <CircularProgress sx={{ marginLeft: "50%", marginTop: "10%" }} />
-        )}
-        {!loading &&
-          submissionTypes.map((item) => (
-            <>
-              <Grid item xs={4}>
-                <Typography variant="subtitle1">{item.name}</Typography>
-              </Grid>
-              <Grid item xs={3}>
-                <Button
-                  label="Upload"
-                  onClick={onButtonClickHandler.bind(null, item._id)}
-                />
-              </Grid>
-              <Grid item xs={12} />
-            </>
-          ))}
-      </Grid>
-      <Modal
-        open={open}
-        title="Upload"
-        content={
-          <UploadForm
-            errors={error.error}
-            helperTexts={error.text}
-            onChange={onChangeHandler}
-          />
-        }
-        onSubmit={onSubmitHandler}
-        onClose={onModalClose}
-      />
+      <Notify message={message} />
+      <div style={{ minHeight: "400px" }}>
+        <Grid container spacing={2}>
+          {loading && (
+            <CircularProgress sx={{ marginLeft: "50%", marginTop: "10%" }} />
+          )}
+          {!loading &&
+            submissionTypes.map((item) => (
+              <>
+                <Grid item xs={4}>
+                  <Typography variant="subtitle1">{item.name}</Typography>
+                </Grid>
+                <Grid item xs={3}>
+                  <Button
+                    label="Upload"
+                    onClick={onButtonClickHandler.bind(null, item._id)}
+                  />
+                </Grid>
+                <Grid item xs={12} />
+              </>
+            ))}
+        </Grid>
+        <Modal
+          open={open}
+          title="Upload"
+          content={
+            <UploadForm
+              errors={error.error}
+              helperTexts={error.text}
+              onChange={onChangeHandler}
+            />
+          }
+          onSubmit={onSubmitHandler}
+          onClose={onModalClose}
+        />
+      </div>
     </>
   );
 };

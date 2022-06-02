@@ -25,6 +25,16 @@ const submissionSchema = new Schema(
   }
 );
 
+submissionSchema.methods.toJSON = function () {
+  const submissionObject = this.toObject();
+
+  delete submissionObject.createdAt;
+  delete submissionObject.updatedAt;
+  delete submissionObject.__v;
+
+  return submissionObject;
+};
+
 const SubmissionType = model("SubmissionType", submissionSchema);
 
 module.exports = SubmissionType;

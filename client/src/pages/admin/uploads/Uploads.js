@@ -43,6 +43,7 @@ const Uploads = () => {
   const [helperTexts, setHelperTexts] = useState(initText);
   const [rows, setRows] = useState([]);
   const [options, setOptions] = useState([]);
+  const [serverError, setServerError] = useState("");
 
   const onModalCloseHandler = () => {
     setValues(initValues);
@@ -137,7 +138,7 @@ const Uploads = () => {
         fetchDocuments();
       } catch (error) {
         onLoading(false);
-        console.log(error);
+        setServerError(error.response.data.message)
       }
     }
   };
@@ -148,7 +149,7 @@ const Uploads = () => {
   }, []);
 
   return (
-    <>
+    <div style={{ minHeight: '400px' }}>
       <Grid container spacing={2}>
         <Grid item xs={6} />
         <Grid item xs={6}>
@@ -184,13 +185,14 @@ const Uploads = () => {
             errors={errors}
             helperTexts={helperTexts}
             options={options}
+            serverError={serverError}
             onChange={onChangeHandler}
           />
         }
         onClose={onModalCloseHandler}
         onSubmit={submitHandler}
       />
-    </>
+    </div>
   );
 };
 

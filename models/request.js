@@ -1,5 +1,7 @@
 const mongoose = require("mongoose");
 
+const { REQUEST_STATUS_TYPES: { ACCEPTED, PENDING, REJECTED }, RESEARCH_ROLES: { CO_SUPERVISOR, SUPERVISOR } } = require("../enum");
+
 const { Schema, model } = mongoose;
 
 const requestSchema = new Schema({
@@ -17,12 +19,12 @@ const requestSchema = new Schema({
     },
     researchRole: {
         type: String,
-        enum: ['supervisor', 'coSupervisor']
+        enum: [SUPERVISOR, CO_SUPERVISOR]
     },
     status: {
         type: String,
-        default: 'pending',
-        enum: ['accepted', 'rejected', 'pending']
+        default: PENDING,
+        enum: [ACCEPTED, PENDING, REJECTED]
     }
 }
 );

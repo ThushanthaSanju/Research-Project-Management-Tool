@@ -26,7 +26,7 @@ const GroupRow = ({ profile, classes, onButtonClick }) => {
             />
           )}
         </Grid>
-        <Grid item xs={4} mt={1} ml={2}>
+        <Grid item xs={6} mt={1} ml={2}>
           <Typography variant="subtitle2">
             {profile?.group ? profile.group.name : "No group"}
           </Typography>
