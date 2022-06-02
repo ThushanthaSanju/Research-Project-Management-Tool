@@ -120,13 +120,16 @@ const Users = () => {
   };
 
   const submitHandler = async (event) => {
+
     console.log("object");
+
     event.preventDefault();
 
     try {
       onLoading(true);
 
-      const response = await service.patchUser(data);
+      const response = await service.patchUser(data._id, data);
+
 
       if (response.status === 200) {
         onModalClose();
